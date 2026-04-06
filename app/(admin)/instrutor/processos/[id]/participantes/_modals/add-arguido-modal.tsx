@@ -20,11 +20,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { createQueixosoSchema } from "@/lib/schemas/participante.schema";
+import { createArguidoSchema } from "@/lib/schemas/participante.schema";
 
-import { QueixosoData } from "@/lib/dto/participante.dto";
+import { ArguidoData } from "@/lib/dto/participante.dto";
 
-import { createQueixoso } from "@/app/services/participante.service";
+import { createArguido } from "@/app/services/participante.service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import { useTransition } from "react";
@@ -36,11 +36,11 @@ interface iAppProps {
   setOpen: (state: boolean) => void;
 }
 
-export function AddQueixosoModal({ open, setOpen }: iAppProps) {
+export function AddArguidoModal({ open, setOpen }: iAppProps) {
   const { id } = useParams();
   const [isPending, startTransition] = useTransition();
-  const form = useForm<QueixosoData>({
-    resolver: zodResolver(createQueixosoSchema),
+  const form = useForm<ArguidoData>({
+    resolver: zodResolver(createArguidoSchema),
     defaultValues: {
       profissao: "Engenheiro",
       dataEmissaoBi: "2026-04-02",
@@ -59,12 +59,12 @@ export function AddQueixosoModal({ open, setOpen }: iAppProps) {
     },
   });
 
-  function onSubmit(data: QueixosoData) {
+  function onSubmit(data: ArguidoData) {
     startTransition(async () => {
       try {
-        await createQueixoso(data);
+        await createArguido(data);
         toast.success("SUCESSO", {
-          description: "Queixoso registado com sucesso!",
+          description: "Arguido registado com sucesso!",
         });
         setOpen(false);
         form.reset();
@@ -80,9 +80,9 @@ export function AddQueixosoModal({ open, setOpen }: iAppProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Queixoso</DialogTitle>
+          <DialogTitle>Arguido</DialogTitle>
           <DialogDescription>
-            Adicione um queixoso a este processo.
+            Adicione um arguido a este processo.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

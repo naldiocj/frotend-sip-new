@@ -1,7 +1,12 @@
 "use server";
 
 import { apiWithToken } from "@/lib/api";
-import { ParticipanteData, QueixosoData } from "@/lib/dto/participante.dto";
+import {
+  AdvogadoData,
+  ArguidoData,
+  ParticipanteData,
+  QueixosoData,
+} from "@/lib/dto/participante.dto";
 import { getSession } from "@/lib/session";
 import { revalidateTag } from "next/cache";
 import { requiredUser } from "./user.service";
@@ -32,7 +37,33 @@ export async function createQueixoso(data: QueixosoData) {
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(
-      error.response?.data?.message || "Impossível registar o queixoso",
+      error?.response?.data?.message || "Impossível registar o queixoso",
+    );
+  }
+}
+
+export async function createArguido(data: ArguidoData) {
+  try {
+    const token = await getSession();
+    await apiWithToken(token).post("/arguidos", data);
+    revalidateTag("get-participantes", {});
+  } catch (error: any) {
+    console.log(error.response?.data);
+    throw new Error(
+      error?.response?.data?.message || "Impossível registar o arguido",
+    );
+  }
+}
+
+export async function createAdvogado(data: AdvogadoData) {
+  try {
+    const token = await getSession();
+    await apiWithToken(token).post("/advogados", data);
+    revalidateTag("get-participantes", {});
+  } catch (error: any) {
+    console.log(error.response?.data);
+    throw new Error(
+      error?.response?.data?.message || "Impossível registar o arguido",
     );
   }
 }

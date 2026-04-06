@@ -33,5 +33,30 @@ export type QueixosoData = {
   email: string;
   telefone: string;
   endereco: string;
-  processoId: number;
+  processoNumero: string;
+};
+
+export type ArguidoData = {
+  nomeCompleto: string;
+  nomePai: string;
+  nomeMae: string;
+  estadoCivil: string;
+  idade: number;
+  dataNascimento: string;
+  naturalidade: string;
+  profissao: string;
+  numeroBi: string;
+  dataEmissaoBi: string;
+  email: string;
+  telefone: string;
+  endereco: string;
+  processoNumero: string;
+};
+
+export type AdvogadoData = {
+  nomeCompleto: string;
+  numeroCedula: string;
+  telefone: string;
+  tipoAdvogado: "DEFESA" | "ACUSACAO";
+  processoNumero: string;
 };

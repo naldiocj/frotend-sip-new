@@ -28,7 +28,7 @@ interface iAppProps {
   data: ParticipanteData[];
 }
 
-export function ParticipantesDataTable({ data }: iAppProps) {
+export function DocumentosDataTable({ data }: iAppProps) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 5,

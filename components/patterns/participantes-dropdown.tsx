@@ -1,6 +1,8 @@
 "use client";
 
-import { AddQueixoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-queixoso-modal";
+import { AddAdvogadoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-advogado-modal";
+import { AddArguidoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-arguido-modal";
+import { AddQueixosoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-queixoso-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +26,8 @@ import { Button } from "../ui/button";
 
 export function ParticipantesDropdown() {
   const [openQueixosoModal, setQueixosoModal] = useState(false);
+  const [openArguidoModal, setArguidoModal] = useState(false);
+  const [openAdvogadoModal, setAdvogadoModal] = useState(false);
 
   return (
     <div className="flex items-center justify-center mb-4">
@@ -46,7 +50,7 @@ export function ParticipantesDropdown() {
                 <UserRound aria-hidden="true" />
                 Queixoso
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setArguidoModal(true)}>
                 <Gavel aria-hidden="true" />
                 Arguidos
               </DropdownMenuItem>
@@ -56,7 +60,7 @@ export function ParticipantesDropdown() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setAdvogadoModal(true)}>
                   <BriefcaseBusiness aria-hidden="true" />
                   Advogados
                 </DropdownMenuItem>
@@ -71,7 +75,9 @@ export function ParticipantesDropdown() {
       </DropdownMenu>
 
       {/* Modals */}
-      <AddQueixoModal open={openQueixosoModal} setOpen={setQueixosoModal} />
+      <AddQueixosoModal open={openQueixosoModal} setOpen={setQueixosoModal} />
+      <AddArguidoModal open={openArguidoModal} setOpen={setArguidoModal} />
+      <AddAdvogadoModal open={openAdvogadoModal} setOpen={setAdvogadoModal} />
     </div>
   );
 }
