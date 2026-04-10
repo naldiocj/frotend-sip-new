@@ -1,22 +1,17 @@
 import { DocumentosCard } from "@/components/documentos-card";
 import { DocumentosDataTable } from "@/components/patterns/documentos-datatable";
-import SearchDocumento from "@/components/table/search-documento";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CirclePlus, LayoutGrid, TableProperties, Upload } from "lucide-react";
+import { LayoutGrid, TableProperties } from "lucide-react";
+import RegisterDocumentosModal from "./_components/@modals/register-documentos-modal";
+import SearchDocumento from "./_components/search-documentos";
+import CarregarDocumentosModal from "./_components/@modals/carregar-documentos-modal";
 
 export default function Page() {
   return (
     <>
       <header className="flex justify-end gap-4">
-        <Button>
-          <CirclePlus />
-          Registar
-        </Button>
-        <Button className="bg-green-600 hover:bg-green-600">
-          <Upload />
-          Carregar
-        </Button>
+        <RegisterDocumentosModal />
+        <CarregarDocumentosModal />
       </header>
 
       <div className="gap-5">
@@ -33,7 +28,7 @@ export default function Page() {
           </TabsList>
           <TabsContent value="card">
             <div className="space-y-5">
-              <SearchDocumento promise={new Promise(() => [])} />
+              <SearchDocumento />
               <DocumentosCard />
             </div>
           </TabsContent>

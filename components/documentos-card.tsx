@@ -1,12 +1,4 @@
-import { convertData } from "@/lib/date-utils";
-import {
-  Calendar,
-  Clock,
-  Edit2,
-  MoreVertical,
-  Scale,
-  Trash2,
-} from "lucide-react";
+import { Calendar, Edit2, MoreVertical, Timer, Trash2 } from "lucide-react";
 import { GroupButtonDocumentos } from "./group-button-documentos";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -58,42 +50,26 @@ export function DocumentosCard() {
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <CardTitle className="text-2xl font-black text-foreground light:group-hover:text-primary transition-colors">
-              [STATIC] 002/2026-PGR-AE
+            <CardTitle className="text-center text-2xl font-black text-foreground light:group-hover:text-primary transition-colors">
+              CAPA DO DOCUMENTO
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="h-[100px] text-sm text-muted-foreground line-clamp-4 leading-relaxed italic">
-              "[STATIC]" {"Sem descrição detalhada disponível."}
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-muted">
+          <CardContent className="space-y-2">
+            <div className="grid grid-cols-2 gap-2 pt-4 border-t border-muted">
               <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                 <Calendar className="h-3 w-3" />
-                Ano: [STATIC] 2026
+                Pagina:{" "}
+                <strong className="text-xs font-extrabold">
+                  <Badge variant={"outline"}>{documento}</Badge>
+                </strong>
               </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                <Clock className="h-3 w-3" />
-                {convertData(new Date() as any)}
-              </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground col-span-2">
-                <Scale className="h-3 w-3" />
-                Tipo: [STATIC] XX
+              <div className="flex flex-1 w-full items-center gap-2 text-xs font-medium text-muted-foreground">
+                <Timer className="h-3 w-3" />
+                20/12/2026
               </div>
             </div>
           </CardContent>
-          <CardFooter className="pt-0 border-t border-muted/50 bg-muted/5 mt-4">
-            {/* <Link
-              href={`${INSTRUTOR_PATHS.PROCESSOS}/${replaceAllChar("202-2026-PGR-AE", "/", "-")}`}
-              className="w-full"
-            >
-              <Button
-                variant="link"
-                className="px-0 h-10 text-primary font-bold group-hover:translate-x-1 transition-transform"
-              >
-                Abrir Documento
-              </Button>
-            </Link> */}
+          <CardFooter className="pt-0 border-t border-muted/50 bg-muted/5 mt-0">
             <GroupButtonDocumentos id={1} />
           </CardFooter>
         </Card>
