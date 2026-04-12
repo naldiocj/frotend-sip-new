@@ -66,9 +66,18 @@ export default function CarregarDocumentosModal() {
   return (
     <>
       <div>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog
+          open={open}
+          onOpenChange={() => {
+            setQuery("");
+            return setOpen((prev) => !prev);
+          }}
+        >
           <DialogTrigger asChild>
-            <Button className="bg-green-600 hover:bg-green-600">
+            <Button
+              className="bg-green-600 hover:bg-green-600"
+              onClick={() => setQuery("")}
+            >
               <Upload />
               Carregar
             </Button>

@@ -1,4 +1,6 @@
 export const API_URL = process.env.API_URL!;
+export const API_UPLOAD_URL =
+  process.env.NEXT_PUBLIC_API_UPLOAD_URL! || "http://localhost:8080/api/v1";
 
 export const APP_NAME = "SIP+360º";
 
@@ -27,4 +29,6 @@ export const PARTICIPANTES = {
   ARGUIDO: "ARGUIDO",
   TESTEMUNHA: "TESTEMUNHA",
   ADVOGADO: "ADVOGADO",
+  ADVOGADO_DEFESA: "DEFESA",
+  ADVOGADO_ACUSACAO: "ACUSACAO",
 } as const;

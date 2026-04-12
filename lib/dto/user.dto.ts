@@ -21,3 +21,14 @@ export interface UserListDTO {
   email: string;
   roles: Role[];
 }
+
+export interface UserDTO {
+  id: number;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  roles: Role[];
+  active: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}

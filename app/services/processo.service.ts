@@ -1,7 +1,10 @@
 "use server";
 
 import { apiWithToken } from "@/lib/api";
-import { ProcessoListItem } from "@/lib/dto/processo.dto";
+import {
+  ProcessoDocumentoItem,
+  ProcessoListItem,
+} from "@/lib/dto/processo.dto";
 import { CreateProcessoDTO } from "@/lib/schemas/processo.schema";
 import { getSession } from "@/lib/session";
 import { revalidateTag } from "next/cache";
@@ -13,7 +16,7 @@ export async function getProcessos(query?: string) {
     const token = await getSession();
     const response = await apiWithToken(token, {
       next: { tags: ["get-processos"] },
-    }).get(`/processos?term=${query}`);
+    }).get(`/processos${query ? "?term=" + query : ""}`);
 
     return response.data as ProcessoListItem[];
   } catch (error: any) {
@@ -49,6 +52,27 @@ export async function getProcessoById(id: string) {
     console.log(response.data.crimes);
 
     return response.data as ProcessoListItem;
+  } catch (error: any) {
+    console.log(error.response?.data);
+    throw new Error(
+      error.response?.data?.message ||
+        "Ocorreu um erro ao buscar os processos.",
+    );
+  }
+}
+
+export async function getProcessosDocumentos(
+  processoNumero: string,
+  query?: string,
+) {
+  await requiredUser();
+  try {
+    const token = await getSession();
+    const response = await apiWithToken(token, {
+      next: { tags: ["get-processos-documentos"] },
+    }).get(`/processos-documentos/${processoNumero}?term=${query}`);
+
+    return response.data as ProcessoDocumentoItem[];
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(

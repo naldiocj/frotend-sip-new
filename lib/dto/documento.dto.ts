@@ -21,3 +21,14 @@ export interface UploadDocumento {
   arquivo: File | null;
   url: string;
 }
+
+// DTOs
+export interface CreateAutoDeclaracaoDTO {
+  numeroFolha: string;
+  dataEmissao: string;
+  descricao: string;
+  endereco: string;
+  processo: { id: string; numero: string };
+  tipoDeclaracao: "INICIAL" | "ADITAMENTO";
+  materiaAutos: string;
+}

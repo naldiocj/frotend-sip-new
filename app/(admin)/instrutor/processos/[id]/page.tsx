@@ -1,88 +1,39 @@
 import { getProcessoById } from "@/app/services/processo.service";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   convertData,
   convertEstadoProcessoToNormalCase,
-  toUpperCase,
+  getBageEstadoProcesso,
 } from "@/lib/date-utils";
 import { ProcessoItem } from "@/lib/dto/processo.dto";
 import { getCrimeTexto } from "@/lib/utils";
 import {
   AlertTriangle,
   Calendar,
-  CheckCircle2,
   Clock,
   FileText,
-  FolderOpen,
   Gavel,
   Hash,
-  Scale,
   Tag,
 } from "lucide-react";
 
-// ─── Data ────────────────────────────────────────────────────────────────────
+/* ─── helpers ─────────────────────────────────────────────────────────── */
 
-const processo = {
-  numero: "235/525-PGR-AE",
-  tipologia: "Normal",
-  anoJudicial: "2026",
-  registadoEm: "18/03/2026",
-  estado: "Em Instrução",
-  nomeDesignacao: "Não atribuído",
-  descricaoMateria: "900KUUBBUUUUUBU",
-  crimes: [
-    { nome: "Corrupção Ativa", artigo: "Art. 362°", gravidade: 3 },
-    { nome: "Burla", artigo: "Art. 417°", gravidade: 2 },
-    { nome: "Abuso de Poder", artigo: "Art. 374°", gravidade: 4 },
-  ],
-  cronologia: [
-    {
-      data: "18/03/2026",
-      titulo: "Abertura do dossier",
-      descricao: "Processo registado no sistema PGR-AE. Instrução iniciada.",
-      ativo: true,
-    },
-    {
-      data: "Pendente",
-      titulo: "Recolha de provas",
-      descricao: "Diligências de investigação em curso.",
-      ativo: false,
-    },
-    {
-      data: "—",
-      titulo: "Conclusão da instrução",
-      descricao: "A aguardar despacho final.",
-      ativo: false,
-    },
-  ],
-};
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
-
-function GravidadeIndicator({ nivel }: { nivel: number }) {
-  const labels: Record<number, string> = {
-    1: "Leve",
-    2: "Moderado",
-    3: "Grave",
-    4: "Muito grave",
-    5: "Crítico",
+function mapTipoProcesso(tipo: string | null): string {
+  const map: Record<string, string> = {
+    NORMAL: "Normal",
+    AVERIGUACAO: "Averiguação",
+    COM_DETIDO: "Com Detido",
   };
-  return (
-    <div className="flex items-center gap-2 mt-2">
-      <div className="flex gap-1">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className={`h-2 w-2 rounded-full ${i < nivel ? "bg-red-500" : "bg-muted"
-              }`}
-          />
-        ))}
-      </div>
-      <span className="text-xs text-muted-foreground">{labels[nivel]}</span>
-    </div>
-  );
+  return tipo ? (map[tipo] ?? tipo) : "—";
 }
 
 function InfoField({
@@ -97,13 +48,13 @@ function InfoField({
   mono?: boolean;
 }) {
   return (
-    <div className="space-y-1.5">
-      <p className="text-[11px] font-medium text-muted-foreground uppercase flex items-center gap-1.5">
-        {Icon && <Icon className="h-3 w-3" />}
+    <div className="rounded-xl border border-border/60 bg-muted/40 p-4 space-y-2.5 dark:bg-muted/20">
+      <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[.22em] text-muted-foreground">
+        {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
         {label}
-      </p>
+      </div>
       <div
-        className={`text-sm font-medium ${mono ? "font-mono bg-muted px-2 py-0.5 rounded w-fit" : ""}`}
+        className={`text-sm font-semibold text-foreground ${mono ? "font-mono" : ""}`}
       >
         {value}
       </div>
@@ -111,107 +62,161 @@ function InfoField({
   );
 }
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
+/* ─── metrics config ──────────────────────────────────────────────────── */
 
-function cards(processo: ProcessoItem) {
+function getMetrics(processo: ProcessoItem) {
   return [
     {
-      label: "Tipologia",
-      value: processo.tipoProcesso,
+      title: "Tipologia",
+      value: mapTipoProcesso(processo.tipoProcesso),
       icon: Tag,
-      mono: false,
-      bg: "bg-violet-100",
+      colorCls: "bg-violet-500/10 text-violet-500 dark:bg-violet-500/15",
     },
     {
-      label: "Ano judicial",
+      title: "Ano judicial",
       value: processo.ano,
       icon: Calendar,
-      mono: true,
-      bg: "bg-emerald-100",
+      colorCls: "bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/15",
     },
     {
-      label: "Crimes imputados",
+      title: "Crimes imputados",
       value: processo.crimes.length,
       icon: AlertTriangle,
-      mono: true,
-      bg: "bg-rose-100",
+      colorCls: "bg-rose-500/10 text-rose-500 dark:bg-rose-500/15",
     },
     {
-      label: "Registado em",
+      title: "Registado em",
       value: convertData(processo.createdAt),
       icon: Clock,
-      mono: true,
-      bg: "bg-amber-100",
+      colorCls: "bg-amber-500/10 text-amber-500 dark:bg-amber-500/15",
     },
   ];
+}
+
+/* ─── page ────────────────────────────────────────────────────────────── */
+
+interface PageProps {
+  params: Promise<{ id: string }>;
 }
 
 export default async function Page({ params }: PageProps) {
   const { id } = await params;
   const processo = await getProcessoById(id);
+  const metrics = getMetrics(processo as unknown as ProcessoItem);
+  const statusVariant = getBageEstadoProcesso(processo.estadoProcesso) as
+    | "default"
+    | "secondary"
+    | "destructive"
+    | "outline"
+    | null
+    | undefined;
 
   return (
-    <div className="bg-background">
-      <div className="px-4 py-8 space-y-6">
-        {/* ── Header ── */}
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge
-                variant="outline"
-                className="bg-amber-100 text-amber-800 border-amber-300 font-semibold text-[11px] uppercase tracking-wide"
-              >
-                <Gavel className="h-3 w-3 mr-1" />
-                Dossier Criminal
-              </Badge>
-              <Badge
-                variant="secondary"
-                className="text-[11px] uppercase tracking-wide"
-              >
-                Em instrução
-              </Badge>
+    <main className="bg-background">
+      <div className="flex flex-col gap-6">
+        {/* ── Hero ──────────────────────────────────────────────────────── */}
+        <section className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-xs ring-1 ring-foreground/5">
+          {/* Top: title + status panels */}
+          <div className="flex flex-col gap-6 p-6 lg:flex-row lg:items-start lg:justify-between lg:p-8">
+            {/* Left — identity */}
+            <div className="min-w-0 space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge
+                  variant="outline"
+                  className="gap-1.5 text-[10px] uppercase tracking-[.25em] text-muted-foreground"
+                >
+                  <Gavel className="h-3 w-3" />
+                  Dossier Criminal
+                </Badge>
+                <Badge
+                  variant="secondary"
+                  className="text-[10px] uppercase tracking-[.25em]"
+                >
+                  Em instrução
+                </Badge>
+              </div>
+
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[.28em] text-muted-foreground">
+                  Nº do processo
+                </p>
+                <h1 className="font-mono text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+                  {processo.numero}
+                </h1>
+              </div>
+
+              {processo.descricao && (
+                <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                  {processo.descricao}
+                </p>
+              )}
             </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground uppercase mb-1">
-                Nº do processo
-              </p>
-              <h1 className="text-3xl font-bold tracking-tight font-mono">
-                {processo.numero}
-              </h1>
+
+            {/* Right — status + updated */}
+            <div className="flex shrink-0 flex-row gap-3 sm:flex-row lg:w-56 lg:flex-col">
+              <div className="flex-1 rounded-xl border border-border/60 bg-muted/40 p-4 dark:bg-muted/20">
+                <p className="text-[10px] font-semibold uppercase tracking-[.22em] text-muted-foreground">
+                  Status do processo
+                </p>
+                <div className="mt-3">
+                  <Badge
+                    variant={statusVariant ?? "secondary"}
+                    className="text-xs font-semibold uppercase tracking-wide"
+                  >
+                    {convertEstadoProcessoToNormalCase(
+                      processo.estadoProcesso,
+                    ) ?? "—"}
+                  </Badge>
+                </div>
+              </div>
+
+              <div className="flex-1 rounded-xl border border-border/60 bg-muted/40 p-4 dark:bg-muted/20">
+                <p className="text-[10px] font-semibold uppercase tracking-[.22em] text-muted-foreground">
+                  Última atualização
+                </p>
+                <p className="mt-3 font-mono text-sm font-semibold text-foreground">
+                  {convertData(processo.updatedAt ?? processo.createdAt)}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* ── KPI Cards ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {cards(processo).map(({ label, value, icon: Icon, mono, bg }) => (
-            <Card key={label} className={`border-border/60 ${bg}`}>
-              <CardContent className="pt-4 pb-3 px-4 space-y-1.5">
-                <p className="text-[11px] text-muted-foreground dark:text-blue-800 uppercase flex items-center gap-1.5">
-                  <Icon className="h-3 w-3" />
-                  {label}
-                </p>
+          {/* Metrics strip */}
+          <div className="grid grid-cols-2 divide-x divide-y divide-border/50 border-t border-border/60 xl:grid-cols-4 xl:divide-y-0">
+            {metrics.map(({ title, value, icon: Icon, colorCls }) => (
+              <div
+                key={title}
+                className="flex items-center gap-4 p-5 transition-colors hover:bg-muted/30"
+              >
                 <div
-                  className={`text-base dark:text-black font-semibold ${mono ? "font-mono" : ""}`}
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${colorCls}`}
                 >
-                  {value}
+                  <Icon className="h-5 w-5" />
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
+                    {title}
+                  </p>
+                  <p className="mt-0.5 truncate text-base font-semibold text-foreground">
+                    {value}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase flex items-center gap-2">
-              <FolderOpen className="h-4 w-4" />
-              Dados do processo
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* ── Content grid ──────────────────────────────────────────────── */}
+        <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
+          {/* Dados do processo */}
+          <Card>
+            <CardHeader className="border-b">
+              <CardTitle>Dados do processo</CardTitle>
+              <CardDescription>
+                Todos os detalhes essenciais do arquivo e da matéria.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-3 pt-6 sm:grid-cols-2">
               <InfoField
                 label="Número do processo"
                 value={processo.numero}
@@ -221,8 +226,8 @@ export default async function Page({ params }: PageProps) {
               <InfoField
                 label="Nome / Designação"
                 value={
-                  <span className="text-muted-foreground italic">
-                    {processo.descricao}
+                  <span className="text-sm text-muted-foreground italic">
+                    {processo.descricao || "—"}
                   </span>
                 }
                 icon={Tag}
@@ -230,24 +235,14 @@ export default async function Page({ params }: PageProps) {
               <InfoField
                 label="Tipo de processo"
                 value={
-                  <Badge variant="secondary" className="text-xs font-medium">
-                    {toUpperCase(processo.tipoProcesso)}
+                  <Badge
+                    variant="secondary"
+                    className="text-xs font-semibold uppercase tracking-wide"
+                  >
+                    {mapTipoProcesso(processo.tipoProcesso)}
                   </Badge>
                 }
                 icon={FileText}
-              />
-              <InfoField
-                label="Estado"
-                value={
-                  <Badge className="bg-blue-100 text-blue-800 border-blue-200 border text-xs font-medium">
-                    {toUpperCase(
-                      convertEstadoProcessoToNormalCase(
-                        processo.estadoProcesso,
-                      ),
-                    )}
-                  </Badge>
-                }
-                icon={CheckCircle2}
               />
               <InfoField
                 label="Ano judicial"
@@ -255,43 +250,59 @@ export default async function Page({ params }: PageProps) {
                 icon={Calendar}
                 mono
               />
-              <InfoField
-                label="Descrição / Matéria"
-                value={processo.descricao}
-                icon={FileText}
-                mono
-              />
-            </div>
+            </CardContent>
+          </Card>
 
-            <Separator />
+          {/* Crimes imputados */}
+          <Card>
+            <CardHeader className="border-b">
+              <CardTitle>Crimes imputados</CardTitle>
+              <CardDescription>
+                Resumo das infrações registradas neste processo.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6">
+              {processo.crimes.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic py-4 text-center">
+                  Nenhum crime registado neste processo.
+                </p>
+              ) : (
+                <ul className="space-y-3">
+                  {processo.crimes.map((crime, index) => (
+                    <li
+                      key={crime.id}
+                      className="group flex items-start gap-3 rounded-xl border border-border/60 bg-muted/40 p-4 transition-colors hover:bg-muted/60 dark:bg-muted/20 dark:hover:bg-muted/30"
+                    >
+                      {/* Index badge */}
+                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-rose-500/10 font-mono text-xs font-bold text-rose-500 dark:bg-rose-500/15">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
 
-            <div>
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase mb-4 flex items-center gap-1.5">
-                <Scale className="h-3 w-3" />
-                Crimes imputados
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {processo.crimes.map((crime, i) => (
-                  <div
-                    key={crime.id}
-                    className="rounded-lg border border-border/60 p-4 space-y-1"
-                  >
-                    <p className="text-[10px] font-medium text-muted-foreground uppercase">
-                      Crime {String(i + 1).padStart(2, "0")}
-                    </p>
-                    <p className="text-sm font-semibold">
-                      {getCrimeTexto(crime.descricao)}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {crime.artigoPenal} do Código Penal
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                      {/* Content */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-sm font-semibold leading-snug text-foreground">
+                            {getCrimeTexto(crime.descricao)}
+                          </p>
+                          <Badge
+                            variant="outline"
+                            className="shrink-0 text-[10px] uppercase"
+                          >
+                            {crime.artigoPenal}
+                          </Badge>
+                        </div>
+                        <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                          {crime.artigoPenal} do Código Penal
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

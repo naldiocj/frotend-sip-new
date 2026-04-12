@@ -11,7 +11,20 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+
+/* ─── Helpers ────────────────────────────────────────────────────────────── */
+
+/**
+ * Returns true when the given `url` matches the current `pathname`.
+ * Uses prefix matching for section routes (e.g. /instrutor/processos → active
+ * on /instrutor/processos/123 and its children).
+ */
+function isPathActive(pathname: string, url: string): boolean {
+  if (!url || url === "#") return false;
+  return pathname === url || pathname.startsWith(url + "/");
+}
+
+/* ─── Component ──────────────────────────────────────────────────────────── */
 
 export function NavMain({
   items,
@@ -27,39 +40,43 @@ export function NavMain({
   const pathname = usePathname();
   const router = useRouter();
 
-  const [active, setActive] = useState("");
-
-  useEffect(() => {
-    setActive(pathname);
-  }, []);
-
   return (
     <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col gap-2">
-        <SidebarGroupLabel>{title}</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-[10px] font-semibold uppercase tracking-[.2em] text-sidebar-foreground/40 mb-1">
+        {title}
+      </SidebarGroupLabel>
+      <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                tooltip={item.title}
-                isActive={pathname === item.url}
-                className={cn(
-                  pathname === item.url &&
-                  "bg-blue-500! text-white! hover:bg-blue-600 hover:text-white transition-colors duration-400",
-                )}
-                asChild
-              >
-                <Link
-                  href={item.url}
-                  prefetch={false}
-                  onMouseEnter={() => router.prefetch(item.url)}
+          {items.map((item) => {
+            const active = isPathActive(pathname, item.url);
+
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  isActive={active}
+                  className={cn(
+                    "transition-colors duration-150",
+                    active
+                      ? "bg-primary! dark:bg-primary/60! text-white! dark:text-primary font-medium hover:bg-primary/15 hover:text-primary"
+                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                  )}
+                  asChild
                 >
-                  {item.icon}
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+                  <Link
+                    href={item.url}
+                    prefetch={false}
+                    onMouseEnter={() =>
+                      item.url !== "#" && router.prefetch(item.url)
+                    }
+                  >
+                    {item.icon}
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>

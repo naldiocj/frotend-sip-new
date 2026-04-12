@@ -15,79 +15,93 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { convertData } from "@/lib/date-utils";
 import { DiligenciaItem } from "@/lib/dto/diligencias.dto";
+import { cn } from "@/lib/utils";
 import { CheckIcon, Inbox } from "lucide-react";
-import { Card, CardContent } from "../ui/card";
-
-const orderStatus = [
-  {
-    id: 1,
-    date: "Mar 15, 2024",
-    title: "Order Placed",
-    description: "Your order has been received and is being processed.",
-  },
-  {
-    id: 2,
-    date: "Mar 16, 2024",
-    title: "Payment Confirmed",
-    description: "Transaction successful. Preparing for shipment.",
-  },
-  {
-    id: 3,
-    date: "Mar 18, 2024",
-    title: "Shipped",
-    description: "Your package is on its way. Track your delivery.",
-  },
-  {
-    id: 4,
-    date: "Mar 20, 2024",
-    title: "Delivered",
-    description: "Package successfully delivered to the recipient.",
-  },
-];
 
 interface iAppProps {
   data: DiligenciaItem[];
 }
 
-export function DiligenciasTimeLine({ data }: iAppProps) {
+function EstadoBadge({ estado }: { estado: string }) {
+  const isConcluida = estado === "CONCLUIDA";
   return (
-    <Card className="mt-4">
-      <CardContent>
-        {data.length === 0 ? (
-          <Empty>
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <Inbox />
-              </EmptyMedia>
-              <EmptyTitle>Sem registos</EmptyTitle>
-              <EmptyDescription>
-                Não foram encontradas diligências para este processo.
-              </EmptyDescription>
-            </EmptyHeader>
-          </Empty>
-        ) : (
-          <Timeline defaultValue={3} className="w-full max-w-md">
-            {data.map((item) => (
-              <TimelineItem
-                key={item.id}
-                step={item.id}
-                className="group-data-[orientation=vertical]/timeline:ms-10"
-              >
-                <TimelineHeader>
-                  <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
-                  <TimelineDate>{item.createdAt}</TimelineDate>
-                  <TimelineTitle>{item.titulo}</TimelineTitle>
-                  <TimelineIndicator className="group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center group-data-completed/timeline-item:border-none group-data-[orientation=vertical]/timeline:-left-7">
-                    <CheckIcon className="size-4 group-not-data-completed/timeline-item:hidden" />
-                  </TimelineIndicator>
-                </TimelineHeader>
-                <TimelineContent>{item.descricao}</TimelineContent>
-              </TimelineItem>
-            ))}
-          </Timeline>
-        )}
-      </CardContent>
-    </Card>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[.2em]",
+        isConcluida
+          ? "bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400"
+          : "bg-amber-500/10 text-amber-600 dark:bg-amber-500/15 dark:text-amber-400",
+      )}
+    >
+      {isConcluida ? "Concluída" : "Pendente"}
+    </span>
+  );
+}
+
+export function DiligenciasTimeLine({ data }: iAppProps) {
+  const completedCount = data.filter((d) => d.estado === "CONCLUIDA").length;
+
+  return (
+    <div className="p-6 lg:p-8">
+      {data.length === 0 ? (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Inbox />
+            </EmptyMedia>
+            <EmptyTitle>Sem registos</EmptyTitle>
+            <EmptyDescription>
+              Não foram encontradas diligências para este processo.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      ) : (
+        <Timeline defaultValue={completedCount} className="w-full">
+          {data.map((item, index) => (
+            <TimelineItem
+              key={item.id}
+              step={index + 1}
+              className="group-data-[orientation=vertical]/timeline:ms-10"
+            >
+              <TimelineHeader>
+                <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
+
+                {/* Date */}
+                <TimelineDate className="font-mono text-[11px]">
+                  {convertData(item.createdAt)}
+                </TimelineDate>
+
+                {/* Title row */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <TimelineTitle className="text-sm font-semibold text-foreground">
+                    {item.titulo}
+                  </TimelineTitle>
+                  <EstadoBadge estado={item.estado} />
+                </div>
+
+                {/* Indicator */}
+                <TimelineIndicator className="group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center group-data-completed/timeline-item:border-none group-data-[orientation=vertical]/timeline:-left-7">
+                  <CheckIcon className="size-4 group-not-data-completed/timeline-item:hidden" />
+                </TimelineIndicator>
+              </TimelineHeader>
+
+              {/* Etapa + Description */}
+              <TimelineContent className="mt-2 space-y-2">
+                {item.etapa && (
+                  <p className="text-[11px] font-semibold uppercase tracking-[.2em] text-muted-foreground/70">
+                    {item.etapa}
+                  </p>
+                )}
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {item.descricao}
+                </p>
+              </TimelineContent>
+            </TimelineItem>
+          ))}
+        </Timeline>
+      )}
+    </div>
   );
 }

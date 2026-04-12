@@ -13,274 +13,143 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@/hooks/user-context";
 import {
   Activity,
-  CameraIcon,
-  ChartBarIcon,
-  CircleHelpIcon,
-  DatabaseIcon,
-  FileChartColumnIcon,
+  BriefcaseBusiness,
+  BarChart3,
+  CircleHelp,
   FileCheck,
-  FileIcon,
-  FileTextIcon,
-  FolderIcon,
+  Folder,
   FolderOpen,
   LayoutDashboard,
-  LayoutDashboardIcon,
-  ListIcon,
-  SearchIcon,
-  Settings2Icon,
-  ShieldAlert,
-  UsersIcon,
+  List,
+  Settings2,
+  Building2,
+  Users,
+  History,
 } from "lucide-react";
-import { Separator } from "./ui/separator";
+
+/* ─── Navigation data ────────────────────────────────────────────────────── */
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: <LayoutDashboardIcon />,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: <ListIcon />,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: <ChartBarIcon />,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: <FolderIcon />,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: <UsersIcon />,
-    },
-  ],
   navAdmin: [
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: <LayoutDashboardIcon />,
+      icon: <LayoutDashboard className="h-4 w-4" />,
     },
     {
       title: "Usuários",
       url: "/admin/usuarios",
-      icon: <UsersIcon />,
+      icon: <Users className="h-4 w-4" />,
     },
     {
       title: "Crimes",
-      url: "/admin/acompanhamentos",
-      icon: <ChartBarIcon />,
+      url: "/admin/tipos-de-crimes",
+      icon: <BarChart3 className="h-4 w-4" />,
     },
     {
       title: "Categorias",
       url: "/admin/categorias",
-      icon: <FolderIcon />,
+      icon: <Folder className="h-4 w-4" />,
     },
     {
       title: "Patentes",
       url: "/admin/patentes",
-      icon: <FolderIcon />,
+      icon: <BriefcaseBusiness className="h-4 w-4" />,
     },
     {
       title: "Direcções",
       url: "/admin/direccoes",
-      icon: <FolderIcon />,
+      icon: <Folder className="h-4 w-4" />,
+    },
+    {
+      title: "Auditoria",
+      url: "/admin/auditoria",
+      icon: <History className="h-4 w-4" />,
     },
   ],
   navDirector: [
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: <LayoutDashboardIcon />,
+      icon: <LayoutDashboard className="h-4 w-4" />,
     },
     {
       title: "Processos",
-      url: "/directores/processos",
-      icon: <UsersIcon />,
+      url: "/director/processos",
+      icon: <FolderOpen className="h-4 w-4" />,
     },
     {
       title: "Instrutores",
-      url: "/directores/instrutores",
-      icon: <ChartBarIcon />,
+      url: "/director/instrutores",
+      icon: <Users className="h-4 w-4" />,
     },
   ],
   navPiquete: [
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: <LayoutDashboardIcon />,
+      icon: <LayoutDashboard className="h-4 w-4" />,
     },
     {
       title: "Participações",
       url: "/piquetes/participacoes",
-      icon: <ListIcon />,
+      icon: <List className="h-4 w-4" />,
     },
   ],
   navInstrutor: [
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: <LayoutDashboard />,
+      icon: <LayoutDashboard className="h-4 w-4" />,
     },
     {
       title: "Processos",
       url: "/instrutor/processos",
-      icon: <FolderOpen />,
+      icon: <FolderOpen className="h-4 w-4" />,
     },
-    {
-      title: "Acompanhamentos",
-      url: "#",
-      icon: <Activity />,
-    },
-    {
-      title: "Detidos",
-      url: "#",
-      icon: <ShieldAlert />,
-    },
-    {
-      title: "Mandados",
-      url: "#",
-      icon: <FileCheck />,
-    },
+    // { title: "Detidos", url: "#", icon: <ShieldAlert className="h-4 w-4" /> },
+    { title: "Mandados", url: "#", icon: <FileCheck className="h-4 w-4" /> },
   ],
   navSecretaria: [
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: <LayoutDashboardIcon />,
+      icon: <LayoutDashboard className="h-4 w-4" />,
     },
     {
-      title: "Secretaria",
+      title: "Processos",
       url: "/secretaria/processos",
-      icon: <ListIcon />,
+      icon: <FolderOpen className="h-4 w-4" />,
     },
     {
       title: "Direcções",
-      url: "/secretaria/direcoes",
-      icon: <ChartBarIcon />,
+      url: "/secretaria/direccoes",
+      icon: <Building2 className="h-4 w-4" />,
     },
   ],
   navPgr: [
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: <LayoutDashboardIcon />,
+      icon: <LayoutDashboard className="h-4 w-4" />,
     },
     {
       title: "Processos",
       url: "/pgr/processos",
-      icon: <ListIcon />,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: <CameraIcon />,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: <FileTextIcon />,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: <FileTextIcon />,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: <Settings2Icon />,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: <CircleHelpIcon />,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: <SearchIcon />,
+      icon: <List className="h-4 w-4" />,
     },
   ],
   navQuickAccess: [
-    {
-      title: "Definições",
-      url: "#",
-      icon: <Settings2Icon />,
-    },
-    {
-      title: "Ajuda",
-      url: "#",
-      icon: <CircleHelpIcon />,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: <DatabaseIcon />,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: <FileChartColumnIcon />,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: <FileIcon />,
-    },
+    { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
+    { title: "Ajuda", url: "#", icon: <CircleHelp className="h-4 w-4" /> },
   ],
 };
+
+/* ─── Component ──────────────────────────────────────────────────────────── */
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const {
@@ -291,40 +160,67 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     isPGR,
     isPiquete,
     isPending,
+    isHydrated,
   } = useUser();
+
+  const loading = !isHydrated || isPending;
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader>
+      {/* ── Header ────────────────────────────────────────────────────── */}
+      <SidebarHeader className="border-b border-sidebar-border/60 pb-0">
         <SidebarMenu>
           <SidebarMenuItem>
-            <div className="flex items-center gap-3 space-y-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white font-bold">
+            <div className="flex h-14 items-center gap-3 px-1">
+              {/* Logo badge */}
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground text-[11px] font-bold ring-2 ring-sidebar-primary/20">
                 SIC
               </div>
-              <div className="flex flex-col w-10 h-10">
-                <span className="font-bold text-sm">SIP</span>
-                <span className="text-xs text-muted-foreground">INST</span>
+
+              {/* App title */}
+              <div className="grid leading-tight overflow-hidden">
+                <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">
+                  SIP
+                </span>
+                <span className="truncate text-[10px] font-medium uppercase tracking-[.15em] text-sidebar-foreground/50">
+                  Instrução Processual
+                </span>
               </div>
             </div>
-            <Separator />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        {isPending && <>Loading...</>}
-        {isAdmin && <NavMain items={data.navAdmin} title="Admin" />}
-        {isDirector && <NavMain items={data.navDirector} title="Director" />}
-        {isInstrutor && <NavMain items={data.navInstrutor} title="Instrutor" />}
-        {isSecretaria && (
-          <NavMain items={data.navSecretaria} title="Secretaria" />
-        )}
-        {isPGR && <NavMain items={data.navPgr} title="PGR" />}
-        {isPiquete && <NavMain items={data.navPiquete} title="Piquete" />}
 
-        <NavSecondary items={data.navQuickAccess} className="mt-auto" />
+      {/* ── Content ───────────────────────────────────────────────────── */}
+      <SidebarContent>
+        {loading ? (
+          <div className="space-y-2 px-3 py-4">
+            {Object.keys(data).map((key) => (
+              <Skeleton key={key} className="h-8 w-full rounded-lg" />
+            ))}
+          </div>
+        ) : (
+          <>
+            {isAdmin && <NavMain items={data.navAdmin} title="Administrador" />}
+            {isDirector && (
+              <NavMain items={data.navDirector} title="Director" />
+            )}
+            {isInstrutor && (
+              <NavMain items={data.navInstrutor} title="Instrutor" />
+            )}
+            {isSecretaria && (
+              <NavMain items={data.navSecretaria} title="Secretaria" />
+            )}
+            {isPGR && <NavMain items={data.navPgr} title="PGR" />}
+            {isPiquete && <NavMain items={data.navPiquete} title="Piquete" />}
+
+            <NavSecondary items={data.navQuickAccess} className="mt-auto" />
+          </>
+        )}
       </SidebarContent>
-      <SidebarFooter>
+
+      {/* ── Footer ────────────────────────────────────────────────────── */}
+      <SidebarFooter className="border-t border-sidebar-border/60">
         <NavUser />
       </SidebarFooter>
     </Sidebar>

@@ -1,6 +1,7 @@
 import { apiWithToken } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { requiredUser } from "./user.service";
+import { TipoCrimeDTO } from "@/lib/dto/tipo-crime.dto";
 
 export async function getTiposCrimes() {
   await requiredUser();
@@ -9,7 +10,7 @@ export async function getTiposCrimes() {
     const token = await getSession();
     const response = await apiWithToken(token).get("/tipos-crimes");
 
-    return response.data;
+    return response.data as TipoCrimeDTO[];
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(

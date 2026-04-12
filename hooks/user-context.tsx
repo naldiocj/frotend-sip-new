@@ -25,6 +25,7 @@ export interface UserContextType {
   isPGR: boolean;
   isPiquete: boolean;
   isPending: boolean;
+  isHydrated: boolean;
 }
 
 /**
@@ -43,6 +44,7 @@ export const UserContext = createContext<UserContextType | undefined>(
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [isHydrated, setIsHydrated] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -66,11 +68,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // Load stored user on mount
   useEffect(() => {
     const stored = localStorage.getItem("currentUser");
+
     if (stored) {
       try {
         setUser(JSON.parse(stored));
-      } catch { }
+      } catch {
+        setUser(null);
+      }
     }
+
+    setIsHydrated(true);
   }, []);
 
   // Sync to localStorage and redirect when null
@@ -116,6 +123,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         isPGR,
         isPiquete,
         isPending,
+        isHydrated,
       }}
     >
       {children}

@@ -11,6 +11,17 @@ export interface ProcessoListItem {
   updatedAt: string;
 }
 
+export interface ProcessoDocumentoItem {
+  id: number;
+  titulo: string;
+  tipo: string;
+  descricao: string;
+  processoNumero: string;
+  url: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CrimeItem {
   id: number;
   artigoPenal: string;

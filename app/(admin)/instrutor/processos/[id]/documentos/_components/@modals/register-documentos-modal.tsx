@@ -13,16 +13,19 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { parsers } from "@/lib/searchparams";
 import { CirclePlus } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 import { DOCUMENT_CATEGORIES } from "../../_utils/constants";
 import { filterDocumentos } from "../../_utils/extensions";
 import { CreateDocumento, PecaCategory } from "../../_utils/types";
+import Link from "next/link";
 
 export default function RegisterDocumentosModal() {
   const [open, setOpen] = useState<boolean>(false);
   const { id } = useParams();
+
+  const pathname = usePathname();
 
   const [documentos, setDocumentos] =
     useState<PecaCategory[]>(DOCUMENT_CATEGORIES);
@@ -90,7 +93,8 @@ export default function RegisterDocumentosModal() {
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {category.items.map((doc, idx) => (
-                      <button
+                      <Link
+                        href={`${pathname}/registar/${doc.pathname}`}
                         key={idx}
                         onClick={() => handleTypeSelection(doc.label)}
                         className="flex flex-col items-center justify-center p-4 gap-3 rounded-xl border-2 border-muted bg-card hover:border-primary/50 hover:bg-primary/5 transition-all group text-center h-full min-h-[120px]"
@@ -101,7 +105,7 @@ export default function RegisterDocumentosModal() {
                         <span className="font-semibold text-xs leading-tight group-hover:text-primary transition-colors line-clamp-2">
                           {doc.label}
                         </span>
-                      </button>
+                      </Link>
                     ))}
                   </div>
                 </div>

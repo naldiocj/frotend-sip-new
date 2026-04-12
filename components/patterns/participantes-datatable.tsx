@@ -91,8 +91,18 @@ export function ParticipantesDataTable({ data }: iAppProps) {
               );
             case PARTICIPANTES.ADVOGADO:
               return (
-                <Badge variant="primary-outline">
-                  {PARTICIPANTES.ADVOGADO}
+                <Badge
+                  variant={`${
+                    row.original.advogado?.tipoAdvogado ===
+                    PARTICIPANTES.ADVOGADO_DEFESA
+                      ? "info-outline"
+                      : "destructive-outline"
+                  }`}
+                >
+                  {row.original.advogado.tipoAdvogado ===
+                    PARTICIPANTES.ADVOGADO_DEFESA && "ADVOGADO DE DEFESA"}
+                  {row.original.advogado.tipoAdvogado ===
+                    PARTICIPANTES.ADVOGADO_ACUSACAO && "ADVOGADO DE ACUSAÇÃO"}
                 </Badge>
               );
             default:

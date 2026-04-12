@@ -3,7 +3,7 @@ export interface PecaCategory {
   items: {
     icon: any;
     label: string;
-    url: string;
+    pathname: string;
   }[];
 }
 

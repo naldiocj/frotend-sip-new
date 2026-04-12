@@ -19,7 +19,7 @@ export default async function login(formData: LoginFormDTO) {
     };
   }
 
-  const url = `${process.env.API_URL!}/auth/login`;
+  const url = new URL(`${process.env.API_URL!}/auth/login`);
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

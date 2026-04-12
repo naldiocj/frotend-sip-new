@@ -16,6 +16,7 @@ export interface ParticipanteData {
   advogado: {
     nomeCompleto: string;
     telefone: string;
+    tipoAdvogado: string;
   };
 }
 

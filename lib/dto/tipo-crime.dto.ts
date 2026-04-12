@@ -3,6 +3,6 @@ export interface TipoCrimeDTO {
   artigoPenal?: string;
   descricao: string;
   usuarioId?: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }

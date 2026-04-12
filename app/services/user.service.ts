@@ -3,22 +3,12 @@
 import { apiWithToken } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
+import { UserDTO } from "@/lib/dto/user.dto";
+
+export type CreateUserDTO = Omit<UserDTO, "id" | "createdAt" | "updatedAt">;
 
 export async function getUserSession() {
-  // try {
-  //   const token = await getSession();
-  //   if (!token) {
-  //     return null;
-  //   }
-  //   const response = await apiWithToken(token).get("/users/me");
-  //   return response.data;
-  // } catch (error: any) {
-  //   console.log(error.response?.data);
-  //   return null;
-  // }
-
-  const token =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBzaWMuZ292LmFvIiwiaWF0IjoxNzczNjQ5NjQxLCJleHAiOjE3NzYyNDE2NDF9.i-8Ci488yQNqr_yaFuzlcd8wijGkabzoCh6A7ypfask";
+  const token = await getSession();
   const url = `${process.env.API_URL!}/users/me`;
   const response = await fetch(url, {
     method: "GET",
@@ -44,6 +34,54 @@ export async function getUserSession() {
     status: 401,
     message: "Usuário não encontrado.",
   };
+}
+
+export async function getUsers() {
+  await requiredUser();
+
+  try {
+    const token = await getSession();
+    const response = await apiWithToken(token).get("/users");
+
+    return response.data as UserDTO[];
+  } catch (error: any) {
+    console.log(error.response?.data);
+    throw new Error(
+      error.response?.data?.message || "Ocorreu um erro ao buscar os usuários.",
+    );
+  }
+}
+
+export async function createUser(data: CreateUserDTO) {
+  await requiredUser();
+
+  try {
+    const token = await getSession();
+    const response = await apiWithToken(token).post("/users", data);
+
+    return response.data as UserDTO;
+  } catch (error: any) {
+    console.log(error.response?.data);
+    throw new Error(
+      error.response?.data?.message || "Ocorreu um erro ao registar o usuário.",
+    );
+  }
+}
+
+export async function deleteUser(id: string) {
+  await requiredUser();
+
+  try {
+    const token = await getSession();
+    const response = await apiWithToken(token).delete(`/users/${id}`);
+
+    return response.data as UserDTO;
+  } catch (error: any) {
+    console.log(error.response?.data);
+    throw new Error(
+      error.response?.data?.message || "Ocorreu um erro ao apagar o usuário.",
+    );
+  }
 }
 
 export async function requiredUser() {

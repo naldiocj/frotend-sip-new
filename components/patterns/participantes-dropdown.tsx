@@ -30,7 +30,7 @@ export function ParticipantesDropdown() {
   const [openAdvogadoModal, setAdvogadoModal] = useState(false);
 
   return (
-    <div className="flex items-center justify-center mb-4">
+    <div className="flex items-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button>

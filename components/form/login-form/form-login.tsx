@@ -70,8 +70,11 @@ export function LoginForm({ className }: React.ComponentProps<"form">) {
         method="POST"
       >
         <CardHeader>
-          <CardTitle className="text-2xl">Bem-vindo de volta</CardTitle>
-          <CardDescription>Entre para continuar sua jornada</CardDescription>
+          <CardTitle className="text-2xl">Acesso ao SIP</CardTitle>
+          <CardDescription>
+            Use suas credenciais institucionais para gerenciar processos e
+            diligências.
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -121,6 +124,9 @@ export function LoginForm({ className }: React.ComponentProps<"form">) {
             <Button disabled={isPending} type="submit">
               {isPending ? "Entrando..." : "Entrar"}
             </Button>
+            <p className="text-sm text-muted-foreground">
+              Acesso seguro para instrutores, secretarias e diretores do SIP.
+            </p>
           </FieldGroup>
         </CardContent>
       </form>

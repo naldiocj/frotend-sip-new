@@ -7,7 +7,11 @@ import {
 } from "@/components/reui/data-grid/data-grid";
 import { DataGridColumnHeader } from "@/components/reui/data-grid/data-grid-column-header";
 import { DataGridPagination } from "@/components/reui/data-grid/data-grid-pagination";
-import { DataGridTable } from "@/components/reui/data-grid/data-grid-table";
+import {
+  DataGridTable,
+  DataGridTableRowSelect,
+  DataGridTableRowSelectAll,
+} from "@/components/reui/data-grid/data-grid-table";
 import {
   ColumnDef,
   getCoreRowModel,
@@ -21,11 +25,12 @@ import {
 import { useMemo, useState } from "react";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { PARTICIPANTES } from "@/lib/constants";
-import { ParticipanteData } from "@/lib/dto/participante.dto";
+import { convertData } from "@/lib/date-utils";
+import { GroupButtonDocumentos } from "@/components/group-button-documentos";
+import { ProcessoDocumentoItem } from "@/lib/dto/processo.dto";
 
 interface iAppProps {
-  data: ParticipanteData[];
+  data: ProcessoDocumentoItem[];
 }
 
 export function DocumentosDataTable({ data }: iAppProps) {
@@ -34,98 +39,97 @@ export function DocumentosDataTable({ data }: iAppProps) {
     pageSize: 5,
   });
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "nome", desc: true },
+    { id: "createdAt", desc: true },
   ]);
 
-  const columns = useMemo<ColumnDef<ParticipanteData>[]>(
+  const columns = useMemo<ColumnDef<ProcessoDocumentoItem>[]>(
     () => [
       {
-        accessorKey: "nome",
-        id: "nome",
+        id: "select",
+        header: () => <DataGridTableRowSelectAll />,
+        cell: ({ row }) => <DataGridTableRowSelect row={row} />,
+        size: 52,
+        enableSorting: false,
+        enableHiding: false,
+        enableResizing: false,
+      },
+      {
+        accessorKey: "titulo",
+        id: "titulo",
         header: ({ column }) => (
-          <DataGridColumnHeader title="Nome completo" column={column} />
+          <DataGridColumnHeader title="Título" column={column} />
         ),
-        cell: ({ row }) => {
-          return (
-            <div className="flex items-center gap-3">
-              <div className="text-foreground font-medium">
-                {row.original.tipoParticipante === PARTICIPANTES.ARGUIDO &&
-                  row.original.arguido?.nomeCompleto}
-                {row.original.tipoParticipante === PARTICIPANTES.QUEIXOSO &&
-                  row.original.queixoso?.nomeCompleto}
-                {row.original.tipoParticipante === PARTICIPANTES.TESTEMUNHA &&
-                  row.original.testemunha?.nomeCompleto}
-                {row.original.tipoParticipante === PARTICIPANTES.ADVOGADO &&
-                  row.original.advogado?.nomeCompleto}
-              </div>
-            </div>
-          );
-        },
-        size: 200,
+        cell: ({ row }) => (
+          <div className="text-foreground font-medium">
+            {row.original.titulo}
+          </div>
+        ),
+        size: 260,
         enableSorting: true,
         enableHiding: false,
       },
       {
-        accessorKey: "tipoParticipante",
-        id: "status",
+        accessorKey: "tipo",
+        id: "tipo",
         header: ({ column }) => (
-          <DataGridColumnHeader title="Tipo de Participante" column={column} />
+          <DataGridColumnHeader title="Tipo" column={column} />
         ),
-        cell: ({ row }) => {
-          const tipoParticipante = row.original.tipoParticipante;
-
-          switch (tipoParticipante) {
-            case PARTICIPANTES.QUEIXOSO:
-              return (
-                <Badge variant="success-outline">
-                  {PARTICIPANTES.QUEIXOSO}
-                </Badge>
-              );
-            case PARTICIPANTES.ARGUIDO:
-              return (
-                <Badge variant="warning-outline">{PARTICIPANTES.ARGUIDO}</Badge>
-              );
-            case PARTICIPANTES.TESTEMUNHA:
-              return (
-                <Badge variant="info-outline">{PARTICIPANTES.TESTEMUNHA}</Badge>
-              );
-            case PARTICIPANTES.ADVOGADO:
-              return (
-                <Badge variant="primary-outline">
-                  {PARTICIPANTES.ADVOGADO}
-                </Badge>
-              );
-            default:
-              return <Badge variant="default">DESCONHECIDO</Badge>;
-          }
-        },
-        size: 125,
-        enableResizing: false,
+        cell: ({ row }) => <Badge variant="outline">{row.original.tipo}</Badge>,
+        size: 130,
+        enableSorting: true,
       },
       {
-        accessorKey: "telefone",
-        id: "telefone",
+        accessorKey: "descricao",
+        id: "descricao",
         header: ({ column }) => (
-          <DataGridColumnHeader title="Telefone" column={column} />
+          <DataGridColumnHeader title="Descrição" column={column} />
         ),
-        cell: ({ row }) => {
-          return (
-            <div className="space-y-0.5 py-2">
-              <div className="text-foreground font-medium">
-                {row.original.tipoParticipante === PARTICIPANTES.ARGUIDO &&
-                  row.original.arguido?.telefone}
-                {row.original.tipoParticipante === PARTICIPANTES.QUEIXOSO &&
-                  row.original.queixoso?.telefone}
-                {row.original.tipoParticipante === PARTICIPANTES.TESTEMUNHA &&
-                  row.original.testemunha?.telefone}
-                {row.original.tipoParticipante === PARTICIPANTES.ADVOGADO &&
-                  row.original.advogado?.telefone}
-              </div>
-            </div>
-          );
-        },
+        cell: ({ row }) => (
+          <div className="max-w-88 truncate text-sm text-muted-foreground">
+            {row.original.descricao || "Sem descrição"}
+          </div>
+        ),
+        size: 340,
+      },
+      {
+        accessorKey: "processoNumero",
+        id: "processoNumero",
+        header: ({ column }) => (
+          <DataGridColumnHeader title="Processo" column={column} />
+        ),
+        cell: ({ row }) => (
+          <div className="text-foreground">{row.original.processoNumero}</div>
+        ),
+        size: 160,
+        enableSorting: true,
+      },
+      {
+        accessorKey: "createdAt",
+        id: "createdAt",
+        header: ({ column }) => (
+          <DataGridColumnHeader title="Criado em" column={column} />
+        ),
+        cell: ({ row }) => (
+          <div className="text-foreground">
+            {convertData(row.original.createdAt)}
+          </div>
+        ),
         size: 150,
         enableSorting: true,
+      },
+      {
+        id: "actions",
+        header: () => null,
+        cell: ({ row }) => (
+          <div className="flex justify-center">
+            <GroupButtonDocumentos
+              id={row.original.id}
+              url={row.original.url}
+            />
+          </div>
+        ),
+        size: 120,
+        enableSorting: false,
         enableHiding: false,
       },
     ],
@@ -134,14 +138,15 @@ export function DocumentosDataTable({ data }: iAppProps) {
 
   const table = useReactTable({
     columns,
-    data: data,
+    data,
     pageCount: Math.ceil((data?.length || 0) / pagination.pageSize),
-    getRowId: (row: ParticipanteData) => row.id,
+    getRowId: (row: ProcessoDocumentoItem) => String(row.id),
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
     state: {
       pagination,
       sorting,
     },
-    columnResizeMode: "onChange",
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -154,10 +159,16 @@ export function DocumentosDataTable({ data }: iAppProps) {
     <DataGrid
       table={table}
       recordCount={data?.length || 0}
-      tableLayout={{ columnsResizable: true }}
+      tableLayout={{
+        headerSticky: true,
+        headerBorder: true,
+        rowBorder: true,
+        width: "auto",
+        columnsResizable: false,
+      }}
     >
       <div className="w-full space-y-2.5">
-        <DataGridContainer>
+        <DataGridContainer className="rounded-2xl border-border border bg-background shadow-sm">
           <ScrollArea>
             <DataGridTable />
             <ScrollBar orientation="horizontal" />

@@ -1,5 +1,8 @@
+"use server";
+
 import { User } from "@/lib/dto/user.dto";
 import { getSession } from "@/lib/session";
+import { CreateUserDTO, createUser, deleteUser as deleteUserService } from "@/app/services/user.service";
 
 export async function getUserDetail() {
   const token = await getSession();
@@ -27,4 +30,46 @@ export async function getUserDetail() {
     status: 401,
     message: "Usuário não encontrado.",
   };
+}
+
+export async function registerUser(formData: CreateUserDTO) {
+  if (!formData.name || !formData.email) {
+    return {
+      status: 400,
+      message: "Nome e email são obrigatórios.",
+    };
+  }
+
+  try {
+    const user = await createUser(formData);
+
+    return {
+      status: 200,
+      message: "Utilizador registado com sucesso.",
+      data: user,
+    };
+  } catch (error: any) {
+    return {
+      status: 500,
+      message:
+        error?.message || "Ocorreu um erro ao registar o utilizador.",
+    };
+  }
+}
+
+export async function deleteUser(id: string) {
+  try {
+    const user = await deleteUserService(id);
+
+    return {
+      status: 200,
+      message: "Utilizador apagado com sucesso.",
+      data: user,
+    };
+  } catch (error: any) {
+    return {
+      status: 500,
+      message: error?.message || "Ocorreu um erro ao apagar o utilizador.",
+    };
+  }
 }

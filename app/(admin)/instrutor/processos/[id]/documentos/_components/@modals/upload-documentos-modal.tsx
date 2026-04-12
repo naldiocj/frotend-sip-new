@@ -17,6 +17,8 @@ import { replaceChar } from "@/lib/utils";
 import { FolderOpen } from "lucide-react";
 import { useParams } from "next/navigation";
 import { UploadDocumento } from "../../_utils/types";
+import { useTransition } from "react";
+import { toast } from "sonner";
 
 interface iAppProps {
   formData: UploadDocumento;
@@ -32,6 +34,8 @@ export default function UploadDocumentosModal({
   setOpen,
 }: iAppProps) {
   const { id } = useParams();
+
+  const [transitioning, startTransition] = useTransition();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,8 +55,27 @@ export default function UploadDocumentosModal({
     form.append("arquivo", formData.arquivo);
     form.append("processoNumero", replaceChar(id as string, "-", "/"));
 
-    uploadDocumento(form);
-    // setOpen(false);
+    startTransition(() => {
+      try {
+        uploadDocumento(form);
+
+        setFormData({
+          titulo: "",
+          tipo: "",
+          descricao: "",
+          arquivo: null,
+        });
+
+        toast.success("SUCESSO", {
+          duration: 4000,
+          description: "Documento carregado com sucesso!",
+        });
+      } catch (error) {
+        toast.error("Erro ao registar documento. Tente novamente.");
+      }
+    });
+
+    setOpen(false);
   };
 
   const handleInputChange = (

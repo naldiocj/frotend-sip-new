@@ -41,64 +41,61 @@ export function NavUser() {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-16 w-full rounded-2xl" />
         </SidebarMenuItem>
       </SidebarMenu>
     );
   }
+
+  const initials = user.name
+    .split(" ")
+    .map((word) => word[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
+            <SidebarMenuButton className="group flex w-full items-center gap-3 py-7 border border-border bg-card px-3 text-left transition hover:bg-accent/50 hover:text-accent-foreground dark:hover:bg-accent/30">
+              <Avatar className="h-11 w-11 rounded-2xl bg-primary/10 text-primary">
                 <AvatarImage src={undefined} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-2xl">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs text-muted-foreground">
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  {user.name}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
                   {user.email}
-                </span>
+                </p>
               </div>
-              <EllipsisVerticalIcon className="ml-auto size-4" />
+              <EllipsisVerticalIcon className="size-4 text-muted-foreground transition group-hover:text-foreground" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
+            className="border border-border bg-card p-3 shadow-lg shadow-black/5 dark:shadow-white/5"
+            side={isMobile ? "bottom" : "top"}
+            align="center"
+            sideOffset={10}
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={undefined} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    {user.email}
-                  </span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <CircleUserRoundIcon />
+              <DropdownMenuItem className="cursor-pointer transition hover:bg-primary/10 hover:text-primary">
+                <CircleUserRoundIcon className="mr-2 size-4" />
                 Perfil
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOutIcon />
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="cursor-pointer transition hover:bg-destructive/10 hover:text-destructive"
+            >
+              <LogOutIcon className="mr-2 size-4" />
               Sair
             </DropdownMenuItem>
           </DropdownMenuContent>

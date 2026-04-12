@@ -8,7 +8,7 @@ export async function createSession(token: string) {
   const cookieStore = await cookies();
 
   cookieStore.set(ACCESS_TOKEN, token, {
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     // expires: expiresAt,
     sameSite: "lax",

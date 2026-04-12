@@ -94,22 +94,12 @@ export function CreateProcessoModal({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        {/* <Button
-          size="lg"
-          className="shadow-md hover:shadow-lg transition-all"
-          onClick={() => {
-            form.reset();
-          }}
-        >
-          <Plus className="mr-2 h-5 w-5" />
-          Novo Processo
-        </Button> */}
         <Button>
           <CirclePlus />
           Registar
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-125">
         <DialogHeader>
           <DialogTitle className="text-2xl">Novo Processo</DialogTitle>
           <DialogDescription>
@@ -142,7 +132,7 @@ export function CreateProcessoModal({
             />
           </FieldGroup>
 
-          <div className="space-y-2">
+          <div className="space-y-2 flex gap-4">
             <Controller
               control={form.control}
               name="ano"
@@ -167,9 +157,7 @@ export function CreateProcessoModal({
                 </Field>
               )}
             />
-          </div>
 
-          <div className="space-y-2">
             <Controller
               control={form.control}
               name="tipoProcesso"

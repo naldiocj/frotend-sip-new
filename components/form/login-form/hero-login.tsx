@@ -9,7 +9,7 @@ export default function HeroLogin() {
       className="relative hidden md:flex flex-col justify-between p-10 lg:p-12 border-r border-border bg-cover bg-center"
       style={{ backgroundImage: "url(/engineer.png)" }}
     >
-      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="absolute inset-0 bg-slate-950/80"></div>
       <div className="relative z-10">
         <Link
           href="/"
@@ -18,7 +18,7 @@ export default function HeroLogin() {
         >
           <Image
             src="/sic.png"
-            alt="SIC Logo"
+            alt="SIP Logo"
             width={120}
             height={120}
             className="h-30 w-auto object-contain"
@@ -29,45 +29,45 @@ export default function HeroLogin() {
           </h1>
         </Link>
         <h4 className="text-3xl font-bold leading-tight text-white">
-          "Inteligência - Audácia - Lealdade"
+          "Inteligência, Audácia e Lealdade"
         </h4>
       </div>
 
       <div className="max-w-md relative z-10">
         <h1 className="text-3xl font-bold leading-tight text-white">
-          Simplifique o suporte. Acelere soluções.
+          Digitalize e gerencie processos de instrução criminal com segurança.
         </h1>
         <p className="mt-3 text-gray-300">
-          Centralize chamados, ativos e pessoas em um único lugar. Visão 360º
-          para uma operação mais ágil, colaborativa e previsível.
+          O SIP foca-se na gestão estruturada de diligências, documentos legais e
+          fluxos auditáveis para perícias, instrução e secretaria.
         </p>
 
         <ul className="mt-6 space-y-3 text-sm text-gray-300">
           <li className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-400 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-emerald-400 mt-0.5" />
             <span>
-              SLAs claros e notificações inteligentes para nunca perder o
-              timing.
+              Fluxos de trabalho processuais centralizados e com
+              rastreabilidade.
             </span>
           </li>
           <li className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-400 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-emerald-400 mt-0.5" />
             <span>
-              Organograma integrado: responsabilidades e aprovações sem atritos.
+              Documentos e prazos organizados em um ambiente digital seguro.
             </span>
           </li>
           <li className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-400 mt-0.5" />
+            <CheckCircle className="h-5 w-5 text-emerald-400 mt-0.5" />
             <span>
-              Relatórios prontos para decisões rápidas e melhorias contínuas.
+              Auditoria e controle para equipes de investigação e tomada de
+              decisão.
             </span>
           </li>
         </ul>
       </div>
 
       <div className="text-xs text-gray-400 relative z-10">
-        © {new Date().getFullYear()} DTTI-DDS | {APP_NAME}. Todos os direitos
-        reservados.
+        © {new Date().getFullYear()} SIP | Sistema de Instrução Processual
       </div>
     </div>
   );
