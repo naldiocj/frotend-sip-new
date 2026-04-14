@@ -22,6 +22,7 @@ export interface UserContextType {
   isDirector: boolean;
   isInstrutor: boolean;
   isSecretaria: boolean;
+  isSecretariaGeral: boolean;
   isPGR: boolean;
   isPiquete: boolean;
   isPending: boolean;
@@ -59,6 +60,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   );
   const isSecretaria = roles.some(
     (r) => r.name === ROLES.SECRETARIA && roles.length === 1,
+  );
+  const isSecretariaGeral = roles.some(
+    (r) => r.name === ROLES.SECRETARIA_GERAL && roles.length === 1,
   );
   const isPGR = roles.some((r) => r.name === ROLES.PGR && roles.length === 1);
   const isPiquete = roles.some(
@@ -120,6 +124,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         isDirector,
         isInstrutor,
         isSecretaria,
+        isSecretariaGeral,
         isPGR,
         isPiquete,
         isPending,

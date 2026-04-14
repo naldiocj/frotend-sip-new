@@ -105,7 +105,7 @@ function DataGridTableHeadRow<TData>({
     <tr
       key={headerGroup.id}
       className={cn(
-        "bg-muted/40",
+        "bg-muted/95",
         props.tableLayout?.headerBorder && "[&>th]:border-b",
         props.tableLayout?.cellBorder && "*:last:border-e-0",
         props.tableLayout?.stripped && "bg-transparent",
@@ -310,7 +310,7 @@ function DataGridTableBodyRow<TData>({
       }
       onClick={() => props.onRowClick && props.onRowClick(row.original)}
       className={cn(
-        "hover:bg-muted/40 data-[state=selected]:bg-muted/50",
+        "hover:bg-muted data-[state=selected]:bg-muted/50 dark:bg-muted",
         props.onRowClick && "cursor-pointer",
         !props.tableLayout?.stripped &&
         props.tableLayout?.rowBorder &&
@@ -397,7 +397,7 @@ function DataGridTableBodyRowCell<TData>({
         cell.column.columnDef.meta?.cellClassName,
         props.tableLayout?.columnsPinnable &&
         column.getCanPin() &&
-        '[&[data-pinned][data-last-col]]:border-border data-pinned:bg-background/90 data-pinned:backdrop-blur-xs" [&[data-pinned=left][data-last-col=left]]:border-e! [&[data-pinned=right][data-last-col=right]]:border-s!',
+        '[&[data-pinned][data-last-col]]:border-border data-pinned:bg-background data-pinned:backdrop-blur-xs" [&[data-pinned=left][data-last-col=left]]:border-e! [&[data-pinned=right][data-last-col=right]]:border-s!',
         column.getIndex() === 0 ||
           column.getIndex() === row.getVisibleCells().length - 1
           ? props.tableClassNames?.edgeCell
@@ -417,11 +417,14 @@ function DataGridTableEmpty() {
     <tr>
       <td
         colSpan={totalColumns}
-        className="text-muted-foreground text-sm py-6 text-center"
+        className="text-muted-foreground text-sm py-6 text-cente"
       >
         <div className="flex flex-col justify-center items-center">
           <Inbox size={65} />
-          {props.emptyMessage || "Nenhum resultado encontrado."}
+          <p className="text-xs font-semibold mt-3">
+            {props.emptyMessage ||
+              "Nenhum processo a seu cargo foi encontrado."}
+          </p>
         </div>
       </td>
     </tr>

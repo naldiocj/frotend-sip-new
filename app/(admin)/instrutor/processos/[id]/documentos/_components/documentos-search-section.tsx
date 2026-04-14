@@ -1,18 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import { DocumentosCard } from "@/components/documentos-card";
 import { DocumentosDataTable } from "@/components/patterns/documentos-datatable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileText, LayoutGrid, TableProperties } from "lucide-react";
-import SearchDocumento from "./search-documentos";
 import { ProcessoDocumentoItem } from "@/lib/dto/processo.dto";
+import { LayoutGrid, TableProperties } from "lucide-react";
+import { useMemo, useState } from "react";
+import SearchDocumento from "./search-documentos";
 
 interface DocumentosSearchSectionProps {
   data: ProcessoDocumentoItem[];
 }
 
-export function DocumentosSearchSection({ data }: DocumentosSearchSectionProps) {
+export function DocumentosSearchSection({
+  data,
+}: DocumentosSearchSectionProps) {
   const [query, setQuery] = useState("");
 
   const filteredData = useMemo(() => {
@@ -36,7 +38,9 @@ export function DocumentosSearchSection({ data }: DocumentosSearchSectionProps) 
     <Tabs defaultValue="card">
       <div className="flex flex-col gap-4 border-b border-border/60 px-6 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-8">
         <div>
-          <p className="text-sm font-semibold text-foreground">Modo de exibição</p>
+          <p className="text-sm font-semibold text-foreground">
+            Modo de exibição
+          </p>
           <p className="text-xs text-muted-foreground">
             Cards ou tabela — conforme o seu fluxo preferido.
           </p>

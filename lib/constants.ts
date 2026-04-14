@@ -1,6 +1,6 @@
 export const API_URL = process.env.API_URL!;
 export const API_UPLOAD_URL =
-  process.env.NEXT_PUBLIC_API_UPLOAD_URL! || "http://localhost:8080/api/v1";
+  process.env.NEXT_PUBLIC_API_UPLOAD_URL! || "http://localhost:8080/uploads";
 
 export const APP_NAME = "SIP+360º";
 
@@ -20,6 +20,7 @@ export const ROLES = {
   DIRECTOR: "DIRECTOR",
   INSTRUTOR: "INSTRUTOR",
   SECRETARIA: "SECRETARIA",
+  SECRETARIA_GERAL: "SECRETARIA_GERAL",
   PGR: "PGR",
   PIQUETE: "PIQUETE",
 } as const;

@@ -1,11 +1,11 @@
 import { getUserSession } from "@/app/services/user.service";
-import { ROLES } from "@/lib/constants";
 import { AdminDashboard } from "@/components/dashboard/admin-dashboard";
 import { DirectorDashboard } from "@/components/dashboard/director-dashboard";
 import { InstructorDashboard } from "@/components/dashboard/instructor-dashboard";
 import { PGRDashboard } from "@/components/dashboard/pgr-dashboard";
 import { PiqueteDashboard } from "@/components/dashboard/piquete-dashboard";
 import { SecretariaDashboard } from "@/components/dashboard/secretaria-dashboard";
+import { ROLES } from "@/lib/constants";
 import { RoleDTO } from "@/lib/dto/role.dto";
 
 export default async function Page() {
@@ -23,6 +23,9 @@ export default async function Page() {
         <InstructorDashboard />
       )}
       {roleNames.length === 1 && roleNames.includes(ROLES.SECRETARIA) && (
+        <SecretariaDashboard />
+      )}
+      {roleNames.length === 1 && roleNames.includes(ROLES.SECRETARIA_GERAL) && (
         <SecretariaDashboard />
       )}
       {roleNames.length === 1 && roleNames.includes(ROLES.PGR) && (

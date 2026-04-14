@@ -1,19 +1,18 @@
 "use client";
 
+import { ACCESS_TOKEN, API_UPLOAD_URL } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import Cookies from "js-cookie";
 import { BookOpen, Printer } from "lucide-react";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import { Button } from "./ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "./ui/dialog";
-import { ACCESS_TOKEN, API_UPLOAD_URL } from "@/lib/constants";
 
 interface iAppProps {
   id: number;
@@ -59,9 +58,8 @@ export function GroupButtonDocumentos({ id, url }: iAppProps) {
     }
 
     try {
-      const response = await fetch(`${API_UPLOAD_URL}/documentos/${url}`, {
+      const response = await fetch(`${API_UPLOAD_URL}/Documentos/${url}`, {
         headers,
-        // credentials: "include",
       });
 
       if (!response.ok) {

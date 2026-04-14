@@ -16,19 +16,19 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@/hooks/user-context";
 import {
-  Activity,
-  BriefcaseBusiness,
   BarChart3,
+  Book,
+  BriefcaseBusiness,
+  Building2,
   CircleHelp,
   FileCheck,
   Folder,
   FolderOpen,
+  History,
   LayoutDashboard,
   List,
   Settings2,
-  Building2,
   Users,
-  History,
 } from "lucide-react";
 
 /* ─── Navigation data ────────────────────────────────────────────────────── */
@@ -131,6 +131,28 @@ const data = {
       icon: <Building2 className="h-4 w-4" />,
     },
   ],
+  navSecretariaGeral: [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: <LayoutDashboard className="h-4 w-4" />,
+    },
+    {
+      title: "Processos",
+      url: "/secretaria-geral/processos",
+      icon: <FolderOpen className="h-4 w-4" />,
+    },
+    {
+      title: "Direcções",
+      url: "/secretaria-geral/direccoes",
+      icon: <Building2 className="h-4 w-4" />,
+    },
+    {
+      title: "Livros",
+      url: "/secretaria-geral/livros",
+      icon: <Book className="h-4 w-4" />,
+    },
+  ],
   navPgr: [
     {
       title: "Dashboard",
@@ -157,6 +179,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     isDirector,
     isInstrutor,
     isSecretaria,
+    isSecretariaGeral,
     isPGR,
     isPiquete,
     isPending,
@@ -210,6 +233,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             )}
             {isSecretaria && (
               <NavMain items={data.navSecretaria} title="Secretaria" />
+            )}
+            {isSecretariaGeral && (
+              <NavMain
+                items={data.navSecretariaGeral}
+                title="Secretaria Geral"
+              />
             )}
             {isPGR && <NavMain items={data.navPgr} title="PGR" />}
             {isPiquete && <NavMain items={data.navPiquete} title="Piquete" />}

@@ -10,6 +10,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Pagination,
   PaginationContent,
   PaginationItem,
@@ -17,12 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { useUser } from "@/hooks/user-context";
 
 import { convertData } from "@/lib/date-utils";
 import { ProcessoListItem } from "@/lib/dto/processo.dto";
@@ -33,13 +36,16 @@ import {
   ChevronRight,
   Clock,
   Edit2,
+  Folder,
   FolderOpen,
   MoreVertical,
   Scale,
   Trash2,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { Separator } from "../ui/separator";
 
 interface iAppProps {
   processos: ProcessoListItem[];
@@ -47,6 +53,7 @@ interface iAppProps {
 
 export default function LibraryProcesso({ processos }: iAppProps) {
   const [page, setPage] = useState(1);
+  const { isInstrutor, isSecretaria, isSecretariaGeral } = useUser();
   const pageSize = 8;
   const totalPages = Math.max(1, Math.ceil(processos.length / pageSize));
 
@@ -70,11 +77,8 @@ export default function LibraryProcesso({ processos }: iAppProps) {
       {processos.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-2xl bg-transparent">
           <FolderOpen className="h-16 w-16 text-muted-foreground mb-4" />
-          <h3 className="text-xl font-medium text-foreground">
-            Nenhum processo encontrado
-          </h3>
-          <p className="text-muted-foreground">
-            Experimente ajustar os termos da pesquisa.
+          <p className="text-xs font-semibold text-foreground">
+            Nenhum processo a seu cargo foi encontrado.
           </p>
         </div>
       ) : (
@@ -92,27 +96,62 @@ export default function LibraryProcesso({ processos }: iAppProps) {
                         <Badge variant="outline" className="mb-2 bg-primary/5 ">
                           Processo Judiciário
                         </Badge>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                            >
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem className="gap-2">
-                              <Edit2 className="h-4 w-4" />
-                              Editar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
-                              <Trash2 className="h-4 w-4" />
-                              Remover
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+                        {isSecretaria ||
+                          (isSecretariaGeral && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                >
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuGroup className="space-y-2">
+                                  {isSecretariaGeral && (
+                                    <>
+                                      <DropdownMenuLabel>
+                                        Atribuir
+                                      </DropdownMenuLabel>
+                                      <DropdownMenuItem className="gap-2">
+                                        <Folder className="h-4 w-4" />
+                                        Direcção
+                                      </DropdownMenuItem>
+                                      <Separator />
+                                    </>
+                                  )}
+                                  {isSecretaria && (
+                                    <>
+                                      <DropdownMenuItem className="gap-2">
+                                        <User className="h-4 w-4" />
+                                        Instrutor
+                                      </DropdownMenuItem>
+                                      <Separator />
+                                    </>
+                                  )}
+                                </DropdownMenuGroup>
+
+                                <DropdownMenuGroup className="space-y-2">
+                                  <DropdownMenuLabel>Acções</DropdownMenuLabel>
+                                  <DropdownMenuItem className="gap-2">
+                                    <Edit2 className="h-4 w-4" />
+                                    Editar
+                                  </DropdownMenuItem>
+                                  {isSecretariaGeral && (
+                                    <>
+                                      <Separator />
+                                      <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
+                                        <Trash2 className="h-4 w-4" />
+                                        Remover
+                                      </DropdownMenuItem>
+                                    </>
+                                  )}
+                                </DropdownMenuGroup>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          ))}
                       </div>
                       <CardTitle className="text-2xl font-black text-foreground light:group-hover:text-primary transition-colors">
                         {processo.numero}
@@ -139,20 +178,22 @@ export default function LibraryProcesso({ processos }: iAppProps) {
                         </div>
                       </div>
                     </CardContent>
-                    <CardFooter className="pt-0 border-t border-muted/50 bg-muted/5 mt-4">
-                      <Link
-                        href={`${INSTRUTOR_PATHS.PROCESSOS}/${replaceAllChar(processo.numero, "/", "-")}`}
-                        className="w-full"
-                      >
-                        <Button
-                          variant="link"
-                          className="px-0 h-10 text-primary font-bold group-hover:translate-x-1 transition-transform"
+                    {isInstrutor && (
+                      <CardFooter className="pt-0 border-t border-muted/50 bg-muted/5 mt-4">
+                        <Link
+                          href={`${INSTRUTOR_PATHS.PROCESSOS}/${replaceAllChar(processo.numero, "/", "-")}`}
+                          className="w-full"
                         >
-                          Abrir Dossier Completo
-                          <ChevronRight className="ml-1 h-4 w-4" />
-                        </Button>
-                      </Link>
-                    </CardFooter>
+                          <Button
+                            variant="link"
+                            className="px-0 h-10 text-primary font-bold group-hover:translate-x-1 transition-transform"
+                          >
+                            Abrir Dossier Completo
+                            <ChevronRight className="ml-1 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      </CardFooter>
+                    )}
                   </>
                 </Card>
               ))}

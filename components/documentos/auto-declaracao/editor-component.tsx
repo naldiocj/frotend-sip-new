@@ -1,5 +1,6 @@
 "use client";
 
+import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -8,25 +9,14 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { CreateAutoDeclaracaoDTO } from "@/lib/dto/documento.dto";
+import { replaceChar } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  CalendarDays,
-  FileBadge2,
-  FileText,
-  MapPin,
-  Save,
-  Scale,
-  ScrollText,
-} from "lucide-react";
+import { CalendarDays, FileBadge2, FileText, MapPin } from "lucide-react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import { useTransition } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v3";
@@ -49,19 +39,6 @@ const createAutoDeclaracaoSchema = z.object({
 
 type AutoDeclaracaoFormValues = z.infer<typeof createAutoDeclaracaoSchema>;
 
-const defaultValues: AutoDeclaracaoFormValues = {
-  numeroFolha: "",
-  dataEmissao: "",
-  descricao: "",
-  endereco: "",
-  processo: {
-    id: "",
-    numero: "",
-  },
-  tipoDeclaracao: "INICIAL",
-  materiaAutos: "",
-};
-
 function formatPreviewDate(value: string) {
   if (!value) return "____/____/________";
 
@@ -79,10 +56,26 @@ function buildPreviewTitle(
     return "Auto de Declaração - Aditamento";
   }
 
-  return "Auto de Declaração - Inicial";
+  return "Auto de Declaração";
 }
 
 export function EditorComponent() {
+  const [isPending, startTransition] = useTransition();
+  const { id } = useParams();
+
+  const defaultValues: AutoDeclaracaoFormValues = {
+    numeroFolha: "",
+    dataEmissao: "",
+    descricao: "",
+    endereco: "",
+    processo: {
+      id: "",
+      numero: replaceChar(id as string, "-", "/"),
+    },
+    tipoDeclaracao: "INICIAL",
+    materiaAutos: "",
+  };
+
   const form = useForm<AutoDeclaracaoFormValues>({
     resolver: zodResolver(createAutoDeclaracaoSchema),
     defaultValues,
@@ -162,27 +155,6 @@ export function EditorComponent() {
           <FieldGroup className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
             <Controller
               control={form.control}
-              name="processo.id"
-              render={({ field, fieldState }) => (
-                <Field>
-                  <FieldLabel className="flex items-center gap-2 text-sm font-semibold">
-                    <Scale className="h-4 w-4" />
-                    ID do processo
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    placeholder="Ex: 32"
-                    aria-invalid={fieldState.invalid}
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
               name="processo.numero"
               render={({ field, fieldState }) => (
                 <Field>
@@ -202,34 +174,6 @@ export function EditorComponent() {
               )}
             />
           </FieldGroup>
-
-          <Controller
-            control={form.control}
-            name="tipoDeclaracao"
-            render={({ field, fieldState }) => (
-              <Field>
-                <FieldLabel className="flex items-center gap-2 text-sm font-semibold">
-                  <ScrollText className="h-4 w-4" />
-                  Tipo de declaração
-                </FieldLabel>
-                <Select
-                  value={field.value ?? undefined}
-                  onValueChange={field.onChange}
-                >
-                  <SelectTrigger aria-invalid={fieldState.invalid}>
-                    <SelectValue placeholder="Selecione o tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="INICIAL">Inicial</SelectItem>
-                    <SelectItem value="ADITAMENTO">Aditamento</SelectItem>
-                  </SelectContent>
-                </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
 
           <Controller
             control={form.control}
@@ -302,10 +246,7 @@ export function EditorComponent() {
             >
               Limpar
             </Button>
-            <Button type="submit">
-              <Save className="h-4 w-4" />
-              Validar documento
-            </Button>
+            <SubmitButton isPending={isPending} />
           </div>
         </form>
       </section>
@@ -321,7 +262,7 @@ export function EditorComponent() {
             </h3>
           </div>
           <div className="rounded-full border border-border/60 bg-muted/40 px-3 py-1 text-xs font-medium text-muted-foreground">
-            Processo #{preview?.processo?.id || "—"}
+            Processo #{preview?.processo?.numero || "—"}
           </div>
         </div>
 
@@ -329,10 +270,24 @@ export function EditorComponent() {
           <div className="mx-auto min-h-[1123px] w-full max-w-[794px] bg-white p-10 text-black shadow-[0_20px_60px_rgba(15,23,42,0.14)]">
             <div className="flex min-h-full flex-col gap-8">
               <header className="space-y-5 border-b border-slate-200 pb-6 text-center">
-                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">
+                <div className="flex justify-center mb-3">
+                  <Image
+                    className="p-0"
+                    src="/insignia.jpg"
+                    alt="Insignia da República"
+                    width={60}
+                    height={50}
+                  />
+                </div>
+                <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500 leading-2">
                   República de Angola
+                  <span className="block h-2"></span>
+                  Ministério do Interior
+                  <span className="block h-2"></span>
+                  Serviço de Investigação Criminal
                 </p>
-                <div className="space-y-2">
+
+                <div className="space-y-2 mt-14">
                   <h4 className="text-2xl font-bold uppercase tracking-wide text-slate-900">
                     {buildPreviewTitle(preview?.tipoDeclaracao ?? "INICIAL")}
                   </h4>
@@ -352,8 +307,8 @@ export function EditorComponent() {
 
                 <p>
                   O presente termo é elaborado no âmbito do processo
-                  identificado pelo ID {preview?.processo?.id || "________"} e
-                  número {preview?.processo?.numero || "________________"}, na
+                  identificado pelo número{" "}
+                  {preview?.processo?.numero || "________________"}, na
                   modalidade{" "}
                   {preview?.tipoDeclaracao === "ADITAMENTO"
                     ? "de aditamento"
