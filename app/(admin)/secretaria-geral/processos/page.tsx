@@ -1,3 +1,4 @@
+import { getDireccoes } from "@/app/services/direccao.service";
 import { getProcessos } from "@/app/services/processo.service";
 import { getTiposCrimes } from "@/app/services/tipo-crime.service";
 import LibraryProcesso from "@/components/library/library-processos";
@@ -8,6 +9,7 @@ import {
 } from "@/components/table/processo-data-table";
 import SearchProcesso from "@/components/table/search-processo";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { searchParamsCache } from "@/lib/searchparams";
 import {
   Archive,
@@ -29,6 +31,9 @@ export default async function Page({ searchParams }: PageProps) {
   const { q } = searchParamsCache.parse(await searchParams);
   const processosPromise = getProcessos(q);
   const tiposCrimesPromise = getTiposCrimes();
+
+  const direccoesPromise = getDireccoes();
+  const direccoes: DireccaoDTO[] = await direccoesPromise;
 
   const processos = await processosPromise;
   const refreshKey = processos.map((p) => p.id).join(",");
@@ -171,7 +176,11 @@ export default async function Page({ searchParams }: PageProps) {
 
             {/* Library tab */}
             <TabsContent value="library-mode" className="mt-0 p-6 lg:p-8">
-              <LibraryProcesso processos={processos} />
+              <LibraryProcesso
+                direccoesPromise={direccoesPromise}
+                processosPromise={processosPromise}
+                processos={processos}
+              />
             </TabsContent>
 
             {/* Table tab */}

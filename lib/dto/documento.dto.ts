@@ -32,3 +32,9 @@ export interface CreateAutoDeclaracaoDTO {
   tipoDeclaracao: "INICIAL" | "ADITAMENTO";
   materiaAutos: string;
 }
+
+export interface CreateDocumentoDTO {
+  tipoModelo: string;
+  numeroProcesso: string;
+  conteudo: Object;
+}

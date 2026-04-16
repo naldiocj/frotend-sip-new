@@ -94,7 +94,7 @@ export default function RegisterDocumentosModal() {
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {category.items.map((doc, idx) => (
                       <Link
-                        href={`${pathname}/registar/${doc.pathname}`}
+                        href={`${pathname}/registar?type=${doc.pathname}`}
                         key={idx}
                         onClick={() => handleTypeSelection(doc.label)}
                         className="flex flex-col items-center justify-center p-4 gap-3 rounded-xl border-2 border-muted bg-card hover:border-primary/50 hover:bg-primary/5 transition-all group text-center h-full min-h-[120px]"

@@ -1,10 +1,15 @@
 import { getDireccoes } from "@/app/services/direccao.service";
+import { getProcessos } from "@/app/services/processo.service";
+import { AtribuirDirecaoModal } from "./_components/@modals/atribuir-direcao-modal";
 import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Compass, LayoutGrid, Table } from "lucide-react";
+import { Suspense } from "react";
 
 export default async function Page() {
-  const direccoes: DireccaoDTO[] = await getDireccoes();
+  const direccoesPromise = getDireccoes();
+  const processosPromise = getProcessos();
+  const direccoes: DireccaoDTO[] = await direccoesPromise;
 
   return (
     <main className="bg-background px-4">
@@ -13,28 +18,37 @@ export default async function Page() {
           <div className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:justify-between lg:p-8">
             <div className="space-y-2">
               <p className="text-[10px] font-semibold uppercase tracking-[.28em] text-muted-foreground">
-                Gestão de Direções
+                Gestao de Direccoes
               </p>
               <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-                Direções cadastradas
+                Direccoes cadastradas
               </h1>
               <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Veja as direções do SIP e mantenha o cadastro atualizado para o
-                suporte às rotinas processuais e de instrução.
+                Veja as direccoes do SIP e mantenha o cadastro atualizado para o
+                suporte as rotinas processuais e de instrucao.
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Compass className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
-                  Total de direções
-                </p>
-                <p className="text-sm font-semibold text-foreground">
-                  {direccoes.length} {direccoes.length === 1 ? "direção" : "direções"}
-                </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Suspense>
+                <AtribuirDirecaoModal
+                  direccoesPromise={direccoesPromise}
+                  processosPromise={processosPromise}
+                />
+              </Suspense>
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <Compass className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
+                    Total de direccoes
+                  </p>
+                  <p className="text-sm font-semibold text-foreground">
+                    {direccoes.length}{" "}
+                    {direccoes.length === 1 ? "direccao" : "direccoes"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -44,9 +58,11 @@ export default async function Page() {
           <Tabs defaultValue="table">
             <div className="flex flex-col gap-4 border-b border-border/60 px-6 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-8">
               <div>
-                <p className="text-sm font-semibold text-foreground">Modo de exibição</p>
+                <p className="text-sm font-semibold text-foreground">
+                  Modo de exibicao
+                </p>
                 <p className="text-xs text-muted-foreground">
-                  Alterna entre tabela e cards para consultar as direções.
+                  Alterna entre tabela e cards para consultar as direccoes.
                 </p>
               </div>
 
@@ -82,15 +98,24 @@ export default async function Page() {
                   <tbody className="divide-y divide-border bg-card">
                     {direccoes.map((direccao) => (
                       <tr key={direccao.id} className="hover:bg-muted/60">
-                        <td className="px-6 py-4 font-medium text-foreground">{direccao.id}</td>
-                        <td className="px-6 py-4 text-foreground">{direccao.nome}</td>
-                        <td className="px-6 py-4 text-muted-foreground">{direccao.sigla}</td>
+                        <td className="px-6 py-4 font-medium text-foreground">
+                          {direccao.id}
+                        </td>
+                        <td className="px-6 py-4 text-foreground">
+                          {direccao.nome}
+                        </td>
                         <td className="px-6 py-4 text-muted-foreground">
-                          {new Date(direccao.updatedAt).toLocaleDateString("pt-BR", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          })}
+                          {direccao.sigla}
+                        </td>
+                        <td className="px-6 py-4 text-muted-foreground">
+                          {new Date(direccao.updatedAt).toLocaleDateString(
+                            "pt-BR",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            },
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -109,7 +134,7 @@ export default async function Page() {
                     <div className="flex items-center justify-between gap-4">
                       <div>
                         <p className="text-[11px] font-semibold uppercase tracking-[.24em] text-muted-foreground">
-                          Direção
+                          Direccao
                         </p>
                         <h2 className="mt-2 text-lg font-semibold text-foreground">
                           {direccao.nome}
@@ -122,12 +147,17 @@ export default async function Page() {
                     <div className="mt-4 space-y-3 text-sm text-muted-foreground">
                       <p>{direccao.descricao}</p>
                       <p>
-                        <span className="font-semibold text-foreground">Atualizado:</span>{" "}
-                        {new Date(direccao.updatedAt).toLocaleDateString("pt-BR", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
+                        <span className="font-semibold text-foreground">
+                          Atualizado:
+                        </span>{" "}
+                        {new Date(direccao.updatedAt).toLocaleDateString(
+                          "pt-BR",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          },
+                        )}
                       </p>
                     </div>
                   </article>

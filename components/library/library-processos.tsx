@@ -46,16 +46,26 @@ import {
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Separator } from "../ui/separator";
+import AtribuirDirecaoModal from "@/app/(admin)/secretaria-geral/direccoes/_components/@modals/atribuir-direcao-modal";
+import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 
 interface iAppProps {
   processos: ProcessoListItem[];
+  direccoesPromise: Promise<DireccaoDTO[]>;
+  processosPromise?: Promise<ProcessoListItem[]>;
 }
 
-export default function LibraryProcesso({ processos }: iAppProps) {
+export default function LibraryProcesso({
+  processos,
+  direccoesPromise,
+  processosPromise,
+}: iAppProps) {
   const [page, setPage] = useState(1);
   const { isInstrutor, isSecretaria, isSecretariaGeral } = useUser();
   const pageSize = 8;
   const totalPages = Math.max(1, Math.ceil(processos.length / pageSize));
+  const [open, setOpen] = useState(false);
+  const [processoId, setProcessoId] = useState("");
 
   useEffect(() => {
     setPage(1);
@@ -110,18 +120,26 @@ export default function LibraryProcesso({ processos }: iAppProps) {
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuGroup className="space-y-2">
-                                  {isSecretariaGeral && (
-                                    <>
-                                      <DropdownMenuLabel>
-                                        Atribuir
-                                      </DropdownMenuLabel>
-                                      <DropdownMenuItem className="gap-2">
-                                        <Folder className="h-4 w-4" />
-                                        Direcção
-                                      </DropdownMenuItem>
-                                      <Separator />
-                                    </>
-                                  )}
+                                  {isSecretariaGeral &&
+                                    processo.direcao === null && (
+                                      <>
+                                        <DropdownMenuLabel>
+                                          Atribuir
+                                        </DropdownMenuLabel>
+                                        <DropdownMenuItem
+                                          className="gap-2"
+                                          onClick={() => {
+                                            setOpen(true);
+                                            setProcessoId(String(processo.id));
+                                          }}
+                                        >
+                                          <Folder className="h-4 w-4" />
+                                          Direcção
+                                        </DropdownMenuItem>
+
+                                        <Separator />
+                                      </>
+                                    )}
                                   {isSecretaria && (
                                     <>
                                       <DropdownMenuItem className="gap-2">
@@ -247,6 +265,14 @@ export default function LibraryProcesso({ processos }: iAppProps) {
           )}
         </>
       )}
+
+      <AtribuirDirecaoModal
+        direccoesPromise={direccoesPromise}
+        processosPromise={processosPromise}
+        open={open}
+        setOpen={setOpen}
+        processoId={processoId}
+      />
     </div>
   );
 }

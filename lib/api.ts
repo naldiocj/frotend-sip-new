@@ -51,6 +51,13 @@ export const apiWithToken = (token: string | null, otherHeaders = {}) => {
     ): Promise<T> =>
       client.put<T>(endpoint, body, config).then((res) => res.data),
 
+    patch: <T = any>(
+      endpoint: string,
+      body: unknown,
+      config?: AxiosRequestConfig,
+    ): Promise<T> =>
+      client.patch<T>(endpoint, body, config).then((res) => res.data),
+
     delete: <T = any>(
       endpoint: string,
       config?: AxiosRequestConfig,
