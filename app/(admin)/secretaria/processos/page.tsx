@@ -1,3 +1,4 @@
+import { getDireccoes } from "@/app/services/direccao.service";
 import { getProcessos } from "@/app/services/processo.service";
 import { getTiposCrimes } from "@/app/services/tipo-crime.service";
 import LibraryProcesso from "@/components/library/library-processos";
@@ -28,6 +29,7 @@ type PageProps = {
 export default async function Page({ searchParams }: PageProps) {
   const { q } = searchParamsCache.parse(await searchParams);
   const processosPromise = getProcessos(q);
+  const direccoesPromise = getDireccoes();
   const tiposCrimesPromise = getTiposCrimes();
 
   const processos = await processosPromise;
@@ -171,7 +173,10 @@ export default async function Page({ searchParams }: PageProps) {
 
             {/* Library tab */}
             <TabsContent value="library-mode" className="mt-0 p-6 lg:p-8">
-              <LibraryProcesso processos={processos} />
+              <LibraryProcesso
+                direccoesPromise={direccoesPromise}
+                processos={processos}
+              />
             </TabsContent>
 
             {/* Table tab */}

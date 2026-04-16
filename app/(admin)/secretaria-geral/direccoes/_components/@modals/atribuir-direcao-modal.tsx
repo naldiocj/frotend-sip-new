@@ -57,8 +57,8 @@ export function AtribuirDirecaoModal({
   const [direccaoId, setDireccaoId] = useState("");
   const [isPending, startTransition] = useTransition();
 
-  const direccoes = use(direccoesPromise);
-  const processos = use(processosPromise!);
+  const direccoes = direccoesPromise ? use(direccoesPromise) : [];
+  const processos = processosPromise ? use(processosPromise!) : [];
 
   const processosOrdenados = useMemo(
     () =>
