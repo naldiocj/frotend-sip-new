@@ -121,7 +121,7 @@ export default function LibraryProcesso({
                               <DropdownMenuContent align="end">
                                 <DropdownMenuGroup className="space-y-2">
                                   {isSecretariaGeral &&
-                                    processo.direcao === null && (
+                                    processo.direcao == null && (
                                       <>
                                         <DropdownMenuLabel>
                                           Atribuir
