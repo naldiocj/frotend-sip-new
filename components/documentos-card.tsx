@@ -1,7 +1,9 @@
 "use client";
 
+import { convertData } from "@/lib/date-utils";
+import { ProcessoDocumentoItem } from "@/lib/dto/processo.dto";
+import { Calendar, Edit2, MoreVertical, Timer, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Calendar, Timer, MoreVertical, Edit2, Trash2 } from "lucide-react";
 import { GroupButtonDocumentos } from "./group-button-documentos";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -26,8 +28,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination";
-import { ProcessoDocumentoItem } from "@/lib/dto/processo.dto";
-import { convertData } from "@/lib/date-utils";
 
 interface iAppProps {
   data: ProcessoDocumentoItem[];
@@ -72,7 +72,7 @@ export function DocumentosCard({ data }: iAppProps) {
       </div>
 
       {/* Grid */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
         {currentDocuments.length === 0 ? (
           <div className="col-span-full rounded-xl border border-dashed border-border/60 bg-card p-12 text-center">
             <p className="text-sm text-muted-foreground">
@@ -136,9 +136,6 @@ export function DocumentosCard({ data }: iAppProps) {
                     <span className="font-mono text-muted-foreground">
                       {convertData(documento.createdAt)}
                     </span>
-                  </div>
-                  <div className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2 text-[10px] font-semibold uppercase tracking-[.22em] text-muted-foreground dark:bg-muted/20">
-                    Preview rápido
                   </div>
                 </div>
               </CardContent>

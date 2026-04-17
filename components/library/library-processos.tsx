@@ -27,7 +27,11 @@ import {
 } from "@/components/ui/pagination";
 import { useUser } from "@/hooks/user-context";
 
+import AtribuirDirecaoModal from "@/app/(admin)/secretaria-geral/direccoes/_components/@modals/atribuir-direcao-modal";
+import { AtribuirInstrutorModal } from "@/app/(admin)/secretaria-geral/direccoes/_components/@modals/atribuir-instrutor-modal";
 import { convertData } from "@/lib/date-utils";
+import { InstrutorDetailDTO } from "@/lib/dto/direcao.dto";
+import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { ProcessoListItem } from "@/lib/dto/processo.dto";
 import { INSTRUTOR_PATHS } from "@/lib/path";
 import { replaceAllChar } from "@/lib/utils";
@@ -46,19 +50,19 @@ import {
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Separator } from "../ui/separator";
-import AtribuirDirecaoModal from "@/app/(admin)/secretaria-geral/direccoes/_components/@modals/atribuir-direcao-modal";
-import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 
 interface iAppProps {
   processos: ProcessoListItem[];
-  direccoesPromise: Promise<DireccaoDTO[]>;
+  direccoesPromise?: Promise<DireccaoDTO[]>;
   processosPromise?: Promise<ProcessoListItem[]>;
+  instrutoresPromise?: Promise<InstrutorDetailDTO[]>;
 }
 
 export default function LibraryProcesso({
   processos,
   direccoesPromise,
   processosPromise,
+  instrutoresPromise,
 }: iAppProps) {
   const [page, setPage] = useState(1);
   const { isInstrutor, isSecretaria, isSecretariaGeral } = useUser();
@@ -66,6 +70,7 @@ export default function LibraryProcesso({
   const totalPages = Math.max(1, Math.ceil(processos.length / pageSize));
   const [open, setOpen] = useState(false);
   const [processoId, setProcessoId] = useState("");
+  const [openInstrutorModal, setOpenInstrutorModal] = useState(false);
 
   useEffect(() => {
     setPage(1);
@@ -106,70 +111,77 @@ export default function LibraryProcesso({
                         <Badge variant="outline" className="mb-2 bg-primary/5 ">
                           Processo Judiciário
                         </Badge>
-                        {isSecretaria ||
-                          (isSecretariaGeral && (
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                >
-                                  <MoreVertical className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuGroup className="space-y-2">
-                                  {isSecretariaGeral &&
-                                    processo.direcao == null && (
-                                      <>
-                                        <DropdownMenuLabel>
-                                          Atribuir
-                                        </DropdownMenuLabel>
-                                        <DropdownMenuItem
-                                          className="gap-2"
-                                          onClick={() => {
-                                            setOpen(true);
-                                            setProcessoId(String(processo.id));
-                                          }}
-                                        >
-                                          <Folder className="h-4 w-4" />
-                                          Direcção
-                                        </DropdownMenuItem>
 
-                                        <Separator />
-                                      </>
-                                    )}
-                                  {isSecretaria && (
-                                    <>
-                                      <DropdownMenuItem className="gap-2">
-                                        <User className="h-4 w-4" />
-                                        Instrutor
-                                      </DropdownMenuItem>
-                                      <Separator />
-                                    </>
-                                  )}
-                                </DropdownMenuGroup>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuGroup className="space-y-2">
+                              {isSecretariaGeral &&
+                                processo.direcao == null && (
+                                  <>
+                                    <DropdownMenuLabel>
+                                      Atribuir
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuItem
+                                      className="gap-2"
+                                      onClick={() => {
+                                        setOpen(true);
+                                        setProcessoId(String(processo.id));
+                                      }}
+                                    >
+                                      <Folder className="h-4 w-4" />
+                                      Direcção
+                                    </DropdownMenuItem>
 
-                                <DropdownMenuGroup className="space-y-2">
+                                    <Separator />
+                                  </>
+                                )}
+
+                              {isSecretaria && (
+                                <>
+                                  <DropdownMenuLabel>
+                                    Atribuir
+                                  </DropdownMenuLabel>
+                                  <DropdownMenuItem
+                                    className="gap-2"
+                                    onClick={() => {
+                                      setOpenInstrutorModal(true);
+                                      setProcessoId(String(processo.id));
+                                    }}
+                                  >
+                                    <User className="h-4 w-4" />
+                                    Instrutor
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                            </DropdownMenuGroup>
+
+                            <DropdownMenuGroup className="space-y-2">
+                              {isSecretariaGeral && (
+                                <>
                                   <DropdownMenuLabel>Acções</DropdownMenuLabel>
                                   <DropdownMenuItem className="gap-2">
                                     <Edit2 className="h-4 w-4" />
                                     Editar
                                   </DropdownMenuItem>
-                                  {isSecretariaGeral && (
-                                    <>
-                                      <Separator />
-                                      <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
-                                        <Trash2 className="h-4 w-4" />
-                                        Remover
-                                      </DropdownMenuItem>
-                                    </>
-                                  )}
-                                </DropdownMenuGroup>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          ))}
+                                  <Separator />
+                                  <DropdownMenuItem className="gap-2 text-destructive focus:text-destructive">
+                                    <Trash2 className="h-4 w-4" />
+                                    Remover
+                                  </DropdownMenuItem>
+                                </>
+                              )}
+                            </DropdownMenuGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                       <CardTitle className="text-2xl font-black text-foreground light:group-hover:text-primary transition-colors">
                         {processo.numero}
@@ -267,10 +279,19 @@ export default function LibraryProcesso({
       )}
 
       <AtribuirDirecaoModal
-        direccoesPromise={direccoesPromise}
+        direccoesPromise={direccoesPromise!}
         processosPromise={processosPromise}
         open={open}
         setOpen={setOpen}
+        processoId={processoId}
+      />
+
+      <AtribuirInstrutorModal
+        instrutoresPromise={instrutoresPromise!}
+        direccoesPromise={direccoesPromise!}
+        processosPromise={processosPromise}
+        open={openInstrutorModal}
+        setOpen={setOpenInstrutorModal}
         processoId={processoId}
       />
     </div>

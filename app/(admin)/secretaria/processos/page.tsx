@@ -1,6 +1,8 @@
 import { getDireccoes } from "@/app/services/direccao.service";
+import { getInstrutores } from "@/app/services/director.service";
 import { getProcessos } from "@/app/services/processo.service";
 import { getTiposCrimes } from "@/app/services/tipo-crime.service";
+import { getUserSession } from "@/app/services/user.service";
 import LibraryProcesso from "@/components/library/library-processos";
 import { CreateProcessoModal } from "@/components/modal/create-processo";
 import {
@@ -31,6 +33,8 @@ export default async function Page({ searchParams }: PageProps) {
   const processosPromise = getProcessos(q);
   const direccoesPromise = getDireccoes();
   const tiposCrimesPromise = getTiposCrimes();
+  const { data } = await getUserSession();
+  const instrutoresPromise = getInstrutores(data?.direcao.id || "");
 
   const processos = await processosPromise;
   const refreshKey = processos.map((p) => p.id).join(",");
@@ -174,6 +178,7 @@ export default async function Page({ searchParams }: PageProps) {
             {/* Library tab */}
             <TabsContent value="library-mode" className="mt-0 p-6 lg:p-8">
               <LibraryProcesso
+                instrutoresPromise={instrutoresPromise}
                 direccoesPromise={direccoesPromise}
                 processos={processos}
               />

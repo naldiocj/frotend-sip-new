@@ -1,14 +1,15 @@
 import { getDireccoes } from "@/app/services/direccao.service";
 import { getProcessos } from "@/app/services/processo.service";
-import { AtribuirDirecaoModal } from "./_components/@modals/atribuir-direcao-modal";
-import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { Compass, LayoutGrid, Table } from "lucide-react";
 import { Suspense } from "react";
+import { AtribuirDirecaoModal } from "./_components/@modals/atribuir-direcao-modal";
 
 export default async function Page() {
   const direccoesPromise = getDireccoes();
   const processosPromise = getProcessos();
+
   const direccoes: DireccaoDTO[] = await direccoesPromise;
 
   return (

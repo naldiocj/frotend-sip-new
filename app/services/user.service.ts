@@ -1,9 +1,9 @@
 "use server";
 
 import { apiWithToken } from "@/lib/api";
+import { UserDTO } from "@/lib/dto/user.dto";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
-import { UserDTO } from "@/lib/dto/user.dto";
 
 export type CreateUserDTO = Omit<UserDTO, "id" | "createdAt" | "updatedAt">;
 
@@ -26,7 +26,7 @@ export async function getUserSession() {
     return {
       status: 200,
       message: "Login realizado com sucesso",
-      data: user,
+      data: user as UserDTO,
     };
   }
 

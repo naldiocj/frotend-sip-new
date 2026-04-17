@@ -30,6 +30,28 @@ export async function getDireccoes() {
   }
 }
 
+interface AtribuirInstrutorDTO {
+  processoId: number;
+  instrutorId: number;
+}
+
+export async function atribuirInstrutor(data: AtribuirInstrutorDTO) {
+  try {
+    const token = await getSession();
+    await apiWithToken(token).patch(`/processos/${data.processoId}`, {
+      instrutorId: data.instrutorId,
+    });
+    revalidateTag("get-processos", {});
+    revalidateTag("get-direccoes", {});
+  } catch (error: any) {
+    console.log(error.response?.data);
+    throw new Error(
+      error.response?.data?.message ||
+        "Impossivel atribuir a direccao ao processo",
+    );
+  }
+}
+
 export async function atribuirDirecao(data: AtribuirDireccaoDTO) {
   try {
     const token = await getSession();

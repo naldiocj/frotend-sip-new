@@ -27,6 +27,7 @@ export interface UserDTO {
   name: string;
   email: string;
   phoneNumber: string;
+  direcao: { id: string; nome: string };
   roles: Role[];
   active: boolean;
   createdAt: Date;

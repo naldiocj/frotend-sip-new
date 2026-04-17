@@ -1,10 +1,10 @@
 "use client";
 
-import { ACCESS_TOKEN, API_UPLOAD_URL } from "@/lib/constants";
+import { ACCESS_TOKEN } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
-import { BookOpen, Printer } from "lucide-react";
-import { useEffect, useState } from "react";
+import { BookOpen, Loader2, Printer } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -31,12 +31,60 @@ function getCookieValue(name: string) {
   );
 }
 
+async function imageUrlExists(imageUrl: string): Promise<boolean> {
+  if (!imageUrl) return false;
+
+  const token = Cookies.get(ACCESS_TOKEN) || getCookieValue(ACCESS_TOKEN);
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/files/uploads/Documentos/${imageUrl}`,
+      {
+        headers,
+      },
+    );
+    return response.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
 export function GroupButtonDocumentos({ id, url }: iAppProps) {
   const [currCard, setCurrCard] = useState<number | null>(id);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [viewerUrl, setViewerUrl] = useState<string | null>(null);
   const [viewerLoading, setViewerLoading] = useState(false);
   const [viewerError, setViewerError] = useState<string | null>(null);
+  const [file, setFile] = useState<boolean | null>(false);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout | number | null = null;
+
+    async function checkFile() {
+      const exists = await imageUrlExists(url);
+      setFile(exists);
+
+      if (!exists) {
+        // Retry in 1 minute (60000 ms) if file not found
+        timeoutId = setTimeout(checkFile, 60000);
+      }
+    }
+
+    checkFile();
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId as number);
+      }
+    };
+    // Only run when the url changes
+  }, [url]);
 
   useEffect(() => {
     return () => {
@@ -58,9 +106,12 @@ export function GroupButtonDocumentos({ id, url }: iAppProps) {
     }
 
     try {
-      const response = await fetch(`${API_UPLOAD_URL}/Documentos/${url}`, {
-        headers,
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/files/uploads/Documentos/${url}`,
+        {
+          headers,
+        },
+      );
 
       if (!response.ok) {
         throw new Error(
@@ -100,13 +151,23 @@ export function GroupButtonDocumentos({ id, url }: iAppProps) {
           currCard === id ? "opacity-100" : "opacity-0",
         )}
       >
-        <Button
-          variant="outline"
-          className="cursor-pointer hover:bg-black hover:text-white dark:bg-foreground dark:text-black dark:hover:bg-foreground"
-          onClick={() => openDocument(url)}
-        >
-          <BookOpen />
-        </Button>
+        {file ? (
+          <Button
+            variant="outline"
+            className="cursor-pointer hover:bg-black hover:text-white dark:bg-foreground dark:text-black dark:hover:bg-foreground"
+            onClick={() => openDocument(url)}
+          >
+            <BookOpen />
+          </Button>
+        ) : (
+          <Button
+            variant="outline"
+            className="cursor-pointer hover:bg-black hover:text-white dark:bg-foreground dark:text-black dark:hover:bg-foreground"
+            onClick={() => openDocument(url)}
+          >
+            <Loader2 className="size-4 animate-spin" />
+          </Button>
+        )}
         <Button className="cursor-pointer hover:bg-blue-900">
           <Printer />
         </Button>
@@ -147,12 +208,6 @@ export function GroupButtonDocumentos({ id, url }: iAppProps) {
               </div>
             )}
           </div>
-
-          {/* <DialogFooter className="justify-end">
-            <Button variant="outline" onClick={closeViewer}>
-              Fechar
-            </Button>
-          </DialogFooter> */}
         </DialogContent>
       </Dialog>
     </>
