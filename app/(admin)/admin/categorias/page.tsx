@@ -4,6 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Layers, LayoutGrid, Table } from "lucide-react";
 import { convertData } from "@/lib/date-utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const categorias: CategoriaDTO[] = await getCategorias();
 

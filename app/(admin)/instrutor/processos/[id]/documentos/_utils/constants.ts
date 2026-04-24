@@ -15,6 +15,7 @@ import {
   Send,
   Shield,
   Siren,
+  SquareChartGantt,
   Stamp,
   User,
   Users,
@@ -37,8 +38,8 @@ export const DOCUMENT_CATEGORIES: PecaCategory[] = [
       },
       {
         icon: FileWarning,
-        label: "Auto de Denúncia",
-        pathname: "AUTO_DE_DENUNCIA",
+        label: "Auto de Queixa",
+        pathname: "AUTO_QUEIXA",
       },
       {
         icon: Briefcase,
@@ -113,7 +114,7 @@ export const DOCUMENT_CATEGORIES: PecaCategory[] = [
       {
         icon: Users,
         label: "Auto de Acarcação",
-        pathname: "AUTO_ACARCACAO",
+        pathname: "AUTO_ACARECACAO",
       },
     ],
   },
@@ -191,6 +192,21 @@ export const DOCUMENT_CATEGORIES: PecaCategory[] = [
         icon: FolderOpen,
         label: "Ofício de Remessa",
         pathname: "OFICIO_DE_REMESSA",
+      },
+    ],
+  },
+  {
+    title: "Capas",
+    items: [
+      {
+        icon: SquareChartGantt,
+        label: "Capa de Processo",
+        pathname: "CAPA_PROCESSO",
+      },
+      {
+        icon: SquareChartGantt,
+        label: "Capa da Carta Precatória",
+        pathname: "CAPA_CARTA_PRECATORIA",
       },
     ],
   },

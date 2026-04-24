@@ -3,6 +3,8 @@ import { PatenteDTO } from "@/lib/dto/patente.dto";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Award, LayoutGrid, Table } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const patentes: PatenteDTO[] = await getPatentes();
 

@@ -113,15 +113,18 @@ export default function LibraryProcesso({
                         </Badge>
 
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                            >
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
+                          {(isSecretaria && processo.direcao == null) ||
+                            (processo.instrutor === null && (
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                >
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                            ))}
                           <DropdownMenuContent align="end">
                             <DropdownMenuGroup className="space-y-2">
                               {isSecretariaGeral &&
@@ -145,7 +148,7 @@ export default function LibraryProcesso({
                                   </>
                                 )}
 
-                              {isSecretaria && (
+                              {isSecretaria && processo.instrutor === null && (
                                 <>
                                   <DropdownMenuLabel>
                                     Atribuir

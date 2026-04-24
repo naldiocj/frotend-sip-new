@@ -1,11 +1,11 @@
 "use client";
 
-import * as React from "react";
-import { toast } from "sonner";
+import { registerUser } from "@/app/actions/user.action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { registerUser } from "@/app/actions/user.action";
 import { UserDTO } from "@/lib/dto/user.dto";
+import * as React from "react";
+import { toast } from "sonner";
 
 type CreateUserForm = Omit<UserDTO, "id" | "createdAt" | "updatedAt">;
 
@@ -25,14 +25,17 @@ export function UserForm() {
       .split(",")
       .map((role) => role.trim())
       .filter(Boolean)
-      .map((role) => ({ id: role.toLowerCase().replace(/\s+/g, "-"), name: role }));
+      .map((role) => ({
+        id: role.toLowerCase().replace(/\s+/g, "-"),
+        name: role,
+      }));
 
     if (!name || !email) {
       toast.error("Informe nome e email do utilizador.");
       return;
     }
 
-    const payload: CreateUserForm = {
+    const payload: any = {
       name,
       email,
       phoneNumber,
@@ -66,25 +69,44 @@ export function UserForm() {
         <label htmlFor="email" className="text-sm font-medium text-foreground">
           Email
         </label>
-        <Input id="email" name="email" type="email" placeholder="usuario@sip.gov.ao" />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          placeholder="usuario@sip.gov.ao"
+        />
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="phoneNumber" className="text-sm font-medium text-foreground">
+        <label
+          htmlFor="phoneNumber"
+          className="text-sm font-medium text-foreground"
+        >
           Telefone
         </label>
-        <Input id="phoneNumber" name="phoneNumber" placeholder="+244 9XX XXX XXX" />
+        <Input
+          id="phoneNumber"
+          name="phoneNumber"
+          placeholder="+244 9XX XXX XXX"
+        />
       </div>
 
       <div className="space-y-2">
         <label htmlFor="roles" className="text-sm font-medium text-foreground">
           Perfis
         </label>
-        <Input id="roles" name="roles" placeholder="ADMIN, INSTRUTOR, SECRETARIA" />
+        <Input
+          id="roles"
+          name="roles"
+          placeholder="ADMIN, INSTRUTOR, SECRETARIA"
+        />
       </div>
 
       <div className="space-y-2 sm:col-span-2">
-        <label htmlFor="active" className="flex items-center gap-2 text-sm font-medium text-foreground">
+        <label
+          htmlFor="active"
+          className="flex items-center gap-2 text-sm font-medium text-foreground"
+        >
           <input
             id="active"
             name="active"

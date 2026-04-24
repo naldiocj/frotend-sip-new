@@ -37,4 +37,10 @@ export interface CreateDocumentoDTO {
   tipoModelo: string;
   numeroProcesso: string;
   conteudo: Object;
+  arquivo?: File;
+}
+
+export interface UpdateDocumentoDTO {
+  id: string;
+  arquivo: File;
 }

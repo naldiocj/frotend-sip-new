@@ -46,7 +46,8 @@ function extractDirecaoId(session: any): string | null {
   ];
 
   const value = candidates.find(
-    (candidate) => candidate !== undefined && candidate !== null && candidate !== "",
+    (candidate) =>
+      candidate !== undefined && candidate !== null && candidate !== "",
   );
 
   return value ? String(value) : null;
@@ -93,7 +94,10 @@ export default async function Page({ searchParams }: PageProps) {
   const totalCargos = new Set(
     filteredInstrutores.map((instrutor) => instrutor.cargoId).filter(Boolean),
   ).size;
-  const direcaoNome = filteredInstrutores[0]?.direcao || instrutores[0]?.direcao || "Não informada";
+  const direcao =
+    filteredInstrutores[0]?.direcao ||
+    instrutores[0]?.direcao ||
+    "Não informada";
 
   return (
     <main className="bg-background px-4">
@@ -125,7 +129,9 @@ export default async function Page({ searchParams }: PageProps) {
                 </p>
                 <p className="text-sm font-semibold text-foreground">
                   {filteredInstrutores.length}{" "}
-                  {filteredInstrutores.length === 1 ? "instrutor" : "instrutores"}
+                  {filteredInstrutores.length === 1
+                    ? "instrutor"
+                    : "instrutores"}
                 </p>
               </div>
             </div>
@@ -138,7 +144,9 @@ export default async function Page({ searchParams }: PageProps) {
                 <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
                   Patentes
                 </p>
-                <p className="text-sm font-semibold text-foreground">{totalPatentes}</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {totalPatentes}
+                </p>
               </div>
             </div>
 
@@ -150,7 +158,9 @@ export default async function Page({ searchParams }: PageProps) {
                 <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
                   Cargos
                 </p>
-                <p className="text-sm font-semibold text-foreground">{totalCargos}</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {totalCargos}
+                </p>
               </div>
             </div>
 
@@ -162,7 +172,9 @@ export default async function Page({ searchParams }: PageProps) {
                 <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
                   Direção
                 </p>
-                <p className="text-sm font-semibold text-foreground">{direcaoNome}</p>
+                <p className="text-sm font-semibold text-foreground">
+                  {direcao.nome}
+                </p>
               </div>
             </div>
           </div>
@@ -238,11 +250,13 @@ export default async function Page({ searchParams }: PageProps) {
                         <div className="flex items-center justify-between gap-3">
                           <span className="text-muted-foreground">Direção</span>
                           <span className="font-medium text-foreground">
-                            {instrutor.direcao || "—"}
+                            {instrutor.direcao.nome || "—"}
                           </span>
                         </div>
                         <div className="flex items-center justify-between gap-3">
-                          <span className="text-muted-foreground">Atualizado</span>
+                          <span className="text-muted-foreground">
+                            Atualizado
+                          </span>
                           <span className="font-medium text-foreground">
                             {formatDate(instrutor.updatedAt)}
                           </span>
@@ -279,12 +293,16 @@ export default async function Page({ searchParams }: PageProps) {
                     <TableBody>
                       {filteredInstrutores.map((instrutor) => (
                         <TableRow key={instrutor.id}>
-                          <TableCell className="font-medium">{instrutor.id}</TableCell>
+                          <TableCell className="font-medium">
+                            {instrutor.id}
+                          </TableCell>
                           <TableCell>{instrutor.nomeCompleto}</TableCell>
                           <TableCell>{instrutor.patente}</TableCell>
                           <TableCell>{instrutor.cargoId || "—"}</TableCell>
-                          <TableCell>{instrutor.direcao || "—"}</TableCell>
-                          <TableCell>{formatDate(instrutor.updatedAt)}</TableCell>
+                          <TableCell>{instrutor.direcao.nome || "—"}</TableCell>
+                          <TableCell>
+                            {formatDate(instrutor.updatedAt)}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

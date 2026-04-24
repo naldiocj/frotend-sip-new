@@ -4,7 +4,6 @@ import { getProcessos } from "@/app/services/processo.service";
 import { getTiposCrimes } from "@/app/services/tipo-crime.service";
 import { getUserSession } from "@/app/services/user.service";
 import LibraryProcesso from "@/components/library/library-processos";
-import { CreateProcessoModal } from "@/components/modal/create-processo";
 import {
   ProcessoDataTable,
   SkeletonProcessDataTable,
@@ -71,13 +70,6 @@ export default async function Page({ searchParams }: PageProps) {
                 Alterne entre o modo Livraria e Tabela conforme o seu fluxo
                 preferido.
               </p>
-            </div>
-
-            {/* Right — action */}
-            <div className="shrink-0">
-              <Suspense>
-                <CreateProcessoModal tiposCrimesPromise={tiposCrimesPromise} />
-              </Suspense>
             </div>
           </div>
 

@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import { UserProvider } from "@/hooks/user-context";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
@@ -42,10 +43,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <UserProvider>
-              {children}
-              <Toaster richColors closeButton />
-            </UserProvider>
+            <TooltipProvider>
+              <UserProvider>
+                {children}
+                <Toaster richColors closeButton />
+              </UserProvider>
+            </TooltipProvider>
           </ThemeProvider>
         </NuqsAdapter>
       </body>

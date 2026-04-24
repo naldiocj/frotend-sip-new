@@ -1,8 +1,8 @@
-import { FileText } from "lucide-react";
 import { getProcessosDocumentos } from "@/app/services/processo.service";
-import { DocumentosSearchSection } from "./_components/documentos-search-section";
-import RegisterDocumentosModal from "./_components/@modals/register-documentos-modal";
+import { FileText } from "lucide-react";
 import CarregarDocumentosModal from "./_components/@modals/carregar-documentos-modal";
+import RegisterDocumentosModal from "./_components/@modals/register-documentos-modal";
+import { DocumentosSearchSection } from "./_components/documentos-search-section";
 
 interface PageProps {
   params: Promise<{ id: string }>;

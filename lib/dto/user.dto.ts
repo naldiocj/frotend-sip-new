@@ -1,3 +1,5 @@
+import { RoleDTO } from "./role.dto";
+
 /**
  * Type definition for a generic user object.
  * Extend this interface to match your application's user model.
@@ -28,7 +30,7 @@ export interface UserDTO {
   email: string;
   phoneNumber: string;
   direcao: { id: string; nome: string };
-  roles: Role[];
+  roles: RoleDTO[];
   active: boolean;
   createdAt: Date;
   updatedAt: Date;

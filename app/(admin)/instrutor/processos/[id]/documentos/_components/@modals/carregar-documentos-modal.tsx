@@ -108,7 +108,7 @@ export default function CarregarDocumentosModal() {
                         <button
                           key={idx}
                           onClick={() =>
-                            handleTypeSelection(doc.label, doc.url)
+                            handleTypeSelection(doc.label, doc.pathname)
                           }
                           className="flex flex-col items-center justify-center p-4 gap-3 rounded-xl border-2 border-muted bg-card hover:border-primary/50 hover:bg-primary/5 transition-all group text-center h-full min-h-[120px]"
                         >

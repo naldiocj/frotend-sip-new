@@ -3,7 +3,6 @@
 import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -17,17 +16,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@/hooks/user-context";
 import {
   BarChart3,
+  BellRing,
   Book,
   BriefcaseBusiness,
   Building2,
   CircleHelp,
+  ClipboardPlus,
   FileCheck,
+  FileInput,
   Folder,
   FolderOpen,
   History,
+  LampDesk,
   LayoutDashboard,
   List,
+  NotebookPen,
   Settings2,
+  ShieldAlert,
   Users,
 } from "lucide-react";
 
@@ -70,6 +75,26 @@ const data = {
       url: "/admin/auditoria",
       icon: <History className="h-4 w-4" />,
     },
+    {
+      title: "Secretarias",
+      url: "/admin/secretarias",
+      icon: <LampDesk className="h-4 w-4" />,
+    },
+    { title: "Detidos", url: "#", icon: <ShieldAlert className="h-4 w-4" /> },
+    { title: "Mandados", url: "#", icon: <FileCheck className="h-4 w-4" /> },
+    { title: "Despachos", url: "#", icon: <FileInput className="h-4 w-4" /> },
+    {
+      title: "Notificações",
+      url: "#",
+      icon: <BellRing className="h-4 w-4" />,
+    },
+    {
+      title: "Relatórios",
+      url: "#",
+      icon: <ClipboardPlus className="h-4 w-4" />,
+    },
+    { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
+    { title: "Ajuda", url: "#", icon: <CircleHelp className="h-4 w-4" /> },
   ],
   navDirector: [
     {
@@ -87,6 +112,8 @@ const data = {
       url: "/director/instrutores",
       icon: <Users className="h-4 w-4" />,
     },
+    { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
+    { title: "Ajuda", url: "#", icon: <CircleHelp className="h-4 w-4" /> },
   ],
   navPiquete: [
     {
@@ -99,6 +126,8 @@ const data = {
       url: "/piquetes/participacoes",
       icon: <List className="h-4 w-4" />,
     },
+    { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
+    { title: "Ajuda", url: "#", icon: <CircleHelp className="h-4 w-4" /> },
   ],
   navInstrutor: [
     {
@@ -111,8 +140,30 @@ const data = {
       url: "/instrutor/processos",
       icon: <FolderOpen className="h-4 w-4" />,
     },
-    // { title: "Detidos", url: "#", icon: <ShieldAlert className="h-4 w-4" /> },
+    { title: "Detidos", url: "#", icon: <ShieldAlert className="h-4 w-4" /> },
     { title: "Mandados", url: "#", icon: <FileCheck className="h-4 w-4" /> },
+    {
+      title: "Despachos",
+      url: "/secretaria/direccoes",
+      icon: <NotebookPen className="h-4 w-4" />,
+    },
+    {
+      title: "Remessas",
+      url: "/secretaria/remessas",
+      icon: <FileInput className="h-4 w-4" />,
+    },
+    {
+      title: "Notificações",
+      url: "#",
+      icon: <BellRing className="h-4 w-4" />,
+    },
+    {
+      title: "Relatórios",
+      url: "#",
+      icon: <ClipboardPlus className="h-4 w-4" />,
+    },
+    { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
+    { title: "Ajuda", url: "#", icon: <CircleHelp className="h-4 w-4" /> },
   ],
   navSecretaria: [
     {
@@ -126,10 +177,22 @@ const data = {
       icon: <FolderOpen className="h-4 w-4" />,
     },
     {
-      title: "Direcções",
-      url: "/secretaria/direccoes",
-      icon: <Building2 className="h-4 w-4" />,
+      title: "Instrutores",
+      url: "/director/instrutores",
+      icon: <Users className="h-4 w-4" />,
     },
+    {
+      title: "Remessas",
+      url: "/secretaria/remessas",
+      icon: <FileInput className="h-4 w-4" />,
+    },
+    {
+      title: "Despachos",
+      url: "/secretaria/direccoes",
+      icon: <NotebookPen className="h-4 w-4" />,
+    },
+    { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
+    { title: "Ajuda", url: "#", icon: <CircleHelp className="h-4 w-4" /> },
   ],
   navSecretariaGeral: [
     {
@@ -152,6 +215,8 @@ const data = {
       url: "/secretaria-geral/livros",
       icon: <Book className="h-4 w-4" />,
     },
+    { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
+    { title: "Ajuda", url: "#", icon: <CircleHelp className="h-4 w-4" /> },
   ],
   navPgr: [
     {
@@ -164,6 +229,8 @@ const data = {
       url: "/pgr/processos",
       icon: <List className="h-4 w-4" />,
     },
+    { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
+    { title: "Ajuda", url: "#", icon: <CircleHelp className="h-4 w-4" /> },
   ],
   navQuickAccess: [
     { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },
@@ -243,7 +310,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {isPGR && <NavMain items={data.navPgr} title="PGR" />}
             {isPiquete && <NavMain items={data.navPiquete} title="Piquete" />}
 
-            <NavSecondary items={data.navQuickAccess} className="mt-auto" />
+            {/* <NavSecondary items={data.navQuickAccess} className="mt-auto" /> */}
           </>
         )}
       </SidebarContent>

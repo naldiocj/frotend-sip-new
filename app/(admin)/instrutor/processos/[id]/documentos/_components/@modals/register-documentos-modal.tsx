@@ -13,13 +13,13 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { parsers } from "@/lib/searchparams";
 import { CirclePlus } from "lucide-react";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { useParams, usePathname } from "next/navigation";
 import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 import { DOCUMENT_CATEGORIES } from "../../_utils/constants";
 import { filterDocumentos } from "../../_utils/extensions";
 import { CreateDocumento, PecaCategory } from "../../_utils/types";
-import Link from "next/link";
 
 export default function RegisterDocumentosModal() {
   const [open, setOpen] = useState<boolean>(false);
@@ -27,8 +27,13 @@ export default function RegisterDocumentosModal() {
 
   const pathname = usePathname();
 
-  const [documentos, setDocumentos] =
-    useState<PecaCategory[]>(DOCUMENT_CATEGORIES);
+  const FILTERED_DOCUMENT_CATEGORIES = DOCUMENT_CATEGORIES.filter(
+    (c) => c.title !== "Mandados",
+  );
+
+  const [documentos, setDocumentos] = useState<PecaCategory[]>(
+    FILTERED_DOCUMENT_CATEGORIES,
+  );
 
   const [query, setQuery] = useQueryState("q", {
     ...parsers.q,
@@ -40,7 +45,7 @@ export default function RegisterDocumentosModal() {
 
   useEffect(() => {
     if (!query) {
-      setDocumentos(DOCUMENT_CATEGORIES);
+      setDocumentos(FILTERED_DOCUMENT_CATEGORIES);
       return;
     }
     setDocumentos(filterDocumentos(query.toLowerCase()));

@@ -6,6 +6,8 @@ import { Compass, LayoutGrid, Table } from "lucide-react";
 import { Suspense } from "react";
 import { AtribuirDirecaoModal } from "./_components/@modals/atribuir-direcao-modal";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const direccoesPromise = getDireccoes();
   const processosPromise = getProcessos();

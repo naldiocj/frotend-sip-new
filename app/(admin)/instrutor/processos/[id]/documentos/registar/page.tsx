@@ -8,5 +8,7 @@ export default function Page() {
   const searchParams = useSearchParams();
 
   const type = searchParams.get("type") as keyof typeof DOCUMENT_MODELS;
-  return <DynamicDocumentForm type={type} />;
+  return <>
+    <DynamicDocumentForm type={type} />
+  </>;
 }

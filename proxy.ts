@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { ACCESS_TOKEN, PATHS } from "./lib/constants";
 
-const PUBLIC_PATHS = ["/"];
+const PUBLIC_PATHS = ["/login"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -11,7 +11,7 @@ export async function proxy(request: NextRequest) {
   const token = request.cookies.get(ACCESS_TOKEN)?.value;
 
   if (!token && !isPublic) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (token && isPublic) {

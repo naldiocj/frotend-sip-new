@@ -8,6 +8,7 @@ export interface ProcessoListItem {
   tipoProcesso: "NORMAL" | "AVERIGUACAO" | "COM_DETIDO" | null;
   ano: string;
   crimes: CrimeItem[];
+  instrutor: { id: number; nome: string };
   createdAt: string;
   updatedAt: string;
 }

@@ -5,6 +5,8 @@ import { LayoutGrid, Table, UserPlus, Users } from "lucide-react";
 import { UserForm } from "@/components/admin/user-form";
 import { UserTableActions } from "@/components/admin/user-table-actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const users: UserDTO[] = await getUsers();
 

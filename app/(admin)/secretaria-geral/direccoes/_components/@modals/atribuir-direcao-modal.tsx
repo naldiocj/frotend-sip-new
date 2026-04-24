@@ -3,20 +3,11 @@
 import { atribuirDirecao } from "@/app/services/direccao.service";
 import { Button } from "@/components/ui/button";
 import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import {
@@ -28,23 +19,16 @@ import {
 } from "@/components/ui/select";
 import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { ProcessoListItem } from "@/lib/dto/processo.dto";
-import {
-  Building2,
-  Loader2,
-  Search,
-  SendHorizontal,
-  Folder,
-} from "lucide-react";
+import { Building2, Loader2, SendHorizontal } from "lucide-react";
 import { use, useMemo, useState, useTransition } from "react";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 
 interface AtribuirDirecaoModalProps {
   direccoesPromise: Promise<DireccaoDTO[]>;
   processosPromise: Promise<ProcessoListItem[]> | undefined;
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  processoId: string;
+  open?: boolean;
+  setOpen?: (open: boolean) => void;
+  processoId?: string;
 }
 
 export function AtribuirDirecaoModal({
@@ -77,7 +61,7 @@ export function AtribuirDirecaoModal({
   }
 
   function handleOpenChange(nextOpen: boolean) {
-    setOpen(nextOpen);
+    setOpen!(nextOpen);
     if (!nextOpen) {
       resetState();
     }

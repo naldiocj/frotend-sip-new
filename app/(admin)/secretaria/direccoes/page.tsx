@@ -3,6 +3,8 @@ import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Compass, LayoutGrid, Table } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const direccoes: DireccaoDTO[] = await getDireccoes();
 

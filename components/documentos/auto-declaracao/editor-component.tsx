@@ -334,7 +334,7 @@ export function EditorComponent() {
                   <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">
                     Declaração
                   </p>
-                  <p className="mt-3 whitespace-pre-wrap">
+                  <p className="mt-3 whitespace-pre-wrap break-all">
                     {preview?.descricao ||
                       "O conteúdo descritivo da declaração aparecerá aqui à medida que o formulário for preenchido."}
                   </p>

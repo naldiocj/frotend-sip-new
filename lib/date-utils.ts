@@ -368,3 +368,75 @@ export function getBageEstadoProcesso(value: string | null) {
               ? "destructive"
               : "outline";
 }
+
+const MESES_PORTUGUES = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
+export function formatarDataExtenso(data: Date | null): string {
+  if (!data) {
+    return "Aos ______ dias do mês de ________________________ do ano _______________________";
+  }
+
+  const dia = data.getDate();
+  const mes = data.getMonth();
+  const ano = data.getFullYear();
+
+  const diaStr = dia ? String(dia).padStart(2, "0") : "______";
+  const mesStr =
+    mes !== null && mes >= 0
+      ? MESES_PORTUGUES[mes]
+      : "________________________";
+  const anoStr = ano ? String(ano) : "_______________________";
+
+  return `Aos ${diaStr} dias do mês de ${mesStr} do ano ${anoStr}`;
+}
+
+export function formatarDataExtensoT(data: Date | null): string {
+  if (!data) {
+    return "Aos ______ dias do mês de ________________________ do ano _______________________";
+  }
+
+  const dia = data.getDate();
+  const mes = data.getMonth();
+  const ano = data.getFullYear();
+
+  const diaStr = dia ? String(dia).padStart(2, "0") : "______";
+  const mesStr =
+    mes !== null && mes >= 0
+      ? MESES_PORTUGUES[mes]
+      : "________________________";
+  const anoStr = ano ? String(ano) : "_______________________";
+
+  return `${diaStr} de ${mesStr} de ${anoStr}`;
+}
+
+export function formatarDataNascido(data: Date | null): string {
+  if (!data) {
+    return "Aos ______ dias do mês de ________________________ do ano _______________________";
+  }
+
+  const dia = data.getDate();
+  const mes = data.getMonth();
+  const ano = data.getFullYear();
+
+  const diaStr = dia ? String(dia).padStart(2, "0") : "______";
+  const mesStr =
+    mes !== null && mes >= 0
+      ? MESES_PORTUGUES[mes]
+      : "________________________";
+  const anoStr = ano ? String(ano) : "_______________________";
+
+  return `em ${diaStr} de ${mesStr} de ${anoStr}`;
+}
