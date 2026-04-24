@@ -33,7 +33,7 @@ interface iAppProps {
   data: ProcessoDocumentoItem[];
 }
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 8;
 
 export function DocumentosCard({ data }: iAppProps) {
   const [pageIndex, setPageIndex] = useState(0);
@@ -72,7 +72,7 @@ export function DocumentosCard({ data }: iAppProps) {
       </div>
 
       {/* Grid */}
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {currentDocuments.length === 0 ? (
           <div className="col-span-full rounded-xl border border-dashed border-border/60 bg-card p-12 text-center">
             <p className="text-sm text-muted-foreground">

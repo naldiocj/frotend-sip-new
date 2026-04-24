@@ -3,7 +3,7 @@
 import { ACCESS_TOKEN } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import Cookies from "js-cookie";
-import { BookOpen, Loader2, Printer } from "lucide-react";
+import { BookOpen, Loader2 } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { Button } from "./ui/button";
 import {
@@ -154,7 +154,7 @@ export function GroupButtonDocumentos({ id, url }: iAppProps) {
         {file ? (
           <Button
             variant="outline"
-            className="cursor-pointer hover:bg-black hover:text-white dark:bg-foreground dark:text-black dark:hover:bg-foreground"
+            className="w-full cursor-pointer hover:bg-black hover:text-white dark:bg-foreground dark:text-black dark:hover:bg-foreground"
             onClick={() => openDocument(url)}
           >
             <BookOpen />
@@ -168,9 +168,6 @@ export function GroupButtonDocumentos({ id, url }: iAppProps) {
             <Loader2 className="size-4 animate-spin" />
           </Button>
         )}
-        <Button className="cursor-pointer hover:bg-blue-900">
-          <Printer />
-        </Button>
       </div>
 
       <Dialog

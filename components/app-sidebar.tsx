@@ -140,7 +140,11 @@ const data = {
       url: "/instrutor/processos",
       icon: <FolderOpen className="h-4 w-4" />,
     },
-    { title: "Detidos", url: "#", icon: <ShieldAlert className="h-4 w-4" /> },
+    {
+      title: "Detidos",
+      url: "/admin/detidos",
+      icon: <ShieldAlert className="h-4 w-4" />,
+    },
     { title: "Mandados", url: "#", icon: <FileCheck className="h-4 w-4" /> },
     {
       title: "Despachos",
