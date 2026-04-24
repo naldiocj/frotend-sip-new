@@ -1,7 +1,7 @@
 import { apiWithToken } from "@/lib/api";
+import { TipoCrimeDTO } from "@/lib/dto/tipo-crime.dto";
 import { getSession } from "@/lib/session";
 import { requiredUser } from "./user.service";
-import { TipoCrimeDTO } from "@/lib/dto/tipo-crime.dto";
 
 export async function getTiposCrimes() {
   await requiredUser();

@@ -9,7 +9,7 @@ export async function createSession(token: string) {
 
   cookieStore.set(ACCESS_TOKEN, token, {
     httpOnly: false,
-    secure: true,
+    secure: false,
     // expires: expiresAt,
     sameSite: "lax",
     path: "/",
