@@ -88,7 +88,7 @@ const data = {
     { title: "Despachos", url: "#", icon: <FileInput className="h-4 w-4" /> },
     {
       title: "Notificações",
-      url: "#",
+      url: "/notificacoes",
       icon: <BellRing className="h-4 w-4" />,
     },
     {
@@ -168,7 +168,11 @@ const data = {
     //   url: "/admin/detidos",
     //   icon: <ShieldAlert className="h-4 w-4" />,
     // },
-    { title: "Mandados", url: "#", icon: <FileCheck className="h-4 w-4" /> },
+    {
+      title: "Mandados",
+      url: "/mandados",
+      icon: <FileCheck className="h-4 w-4" />,
+    },
     {
       title: "Despachos",
       url: "/instrutor/despachos",
@@ -176,12 +180,12 @@ const data = {
     },
     {
       title: "Remessas",
-      url: "/secretaria/remessas",
+      url: "/instrutor/remessas",
       icon: <FileInput className="h-4 w-4" />,
     },
     {
       title: "Notificações",
-      url: "#",
+      url: "/notificacoes",
       icon: <BellRing className="h-4 w-4" />,
     },
     {

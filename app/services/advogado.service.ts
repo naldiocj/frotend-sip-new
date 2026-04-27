@@ -11,7 +11,7 @@ export async function getAdvogados(query?: string) {
       next: { tags: ["get-advogados"] },
     }).get(`/advogados${query ? "?term=" + query : ""}`);
 
-    return response as AdvogadoListItem[];
+    return response.data as AdvogadoListItem[];
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(

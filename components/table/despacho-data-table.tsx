@@ -1,6 +1,5 @@
 "use client";
 
-import { AddDespachosModal } from "@/app/(admin)/instrutor/despachos/_modals/add-despachos-modal";
 import {
   DataGrid,
   DataGridContainer,
@@ -9,30 +8,19 @@ import { DataGridColumnHeader } from "@/components/reui/data-grid/data-grid-colu
 import { DataGridPagination } from "@/components/reui/data-grid/data-grid-pagination";
 import { DataGridTable } from "@/components/reui/data-grid/data-grid-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { convertData } from "@/lib/date-utils";
 import { Despacho } from "@/lib/dto/despacho.dto";
 import {
   ColumnDef,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   PaginationState,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { CirclePlus } from "lucide-react";
-import { use, useMemo, useState } from "react";
+import { use, useState } from "react";
 
 const columns: ColumnDef<Despacho>[] = [
   {
@@ -116,10 +104,6 @@ interface Props {
 
 export function DespachoDataTable({ promise }: Props) {
   const data = use(promise);
-  const [openModal, setOpenModal] = useState(false);
-  const [search, setSearch] = useState("");
-  const [estado, setEstado] = useState<"all" | "pendente" | "finalizado">("all");
-
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -128,70 +112,24 @@ export function DespachoDataTable({ promise }: Props) {
     { id: "dataDespacho", desc: true },
   ]);
 
-  const filteredData = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return data.filter((item) => {
-      const textMatch =
-        term.length === 0 ||
-        item.numeroProcesso.toLowerCase().includes(term) ||
-        item.decisao.toLowerCase().includes(term) ||
-        item.autoridadeResponsavel.toLowerCase().includes(term);
-
-      const estadoMatch =
-        estado === "all"
-          ? true
-          : estado === "finalizado"
-            ? item.isFinalizado
-            : !item.isFinalizado;
-
-      return textMatch && estadoMatch;
-    });
-  }, [data, search, estado]);
-
   const table = useReactTable({
     columns,
-    data: filteredData,
-    pageCount: Math.ceil((filteredData.length || 0) / pagination.pageSize),
+    data,
+    pageCount: Math.ceil((data.length || 0) / pagination.pageSize),
     getRowId: (row) => String(row.id ?? `${row.numeroProcesso}-${row.dataDespacho}`),
     state: { pagination, sorting },
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
   return (
     <>
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="grid w-full gap-3 sm:max-w-3xl sm:grid-cols-2">
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Pesquisar por processo, decisão ou autoridade..."
-          />
-          <Select value={estado} onValueChange={(v) => setEstado(v as any)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por estado" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="pendente">Pendentes</SelectItem>
-              <SelectItem value="finalizado">Finalizados</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button onClick={() => setOpenModal(true)} className="shrink-0">
-          <CirclePlus className="h-4 w-4" />
-          Registar despacho
-        </Button>
-      </div>
-
       <DataGrid
         table={table}
-        recordCount={filteredData.length}
+        recordCount={data.length}
         tableLayout={{
           headerSticky: true,
           headerBorder: true,
@@ -210,8 +148,6 @@ export function DespachoDataTable({ promise }: Props) {
           <DataGridPagination />
         </div>
       </DataGrid>
-
-      <AddDespachosModal open={openModal} setOpen={setOpenModal} />
     </>
   );
 }

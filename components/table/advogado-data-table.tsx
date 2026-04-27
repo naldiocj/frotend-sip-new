@@ -1,6 +1,5 @@
 "use client";
 
-import { AddAdvogadoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-advogado-modal";
 import {
   DataGrid,
   DataGridContainer,
@@ -9,29 +8,18 @@ import { DataGridColumnHeader } from "@/components/reui/data-grid/data-grid-colu
 import { DataGridPagination } from "@/components/reui/data-grid/data-grid-pagination";
 import { DataGridTable } from "@/components/reui/data-grid/data-grid-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { AdvogadoListItem, TipoAdvogado } from "@/lib/dto/advogado.dto";
 import {
   ColumnDef,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   PaginationState,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { CirclePlus } from "lucide-react";
-import { use, useMemo, useState } from "react";
+import { use, useState } from "react";
 
 const columns: ColumnDef<AdvogadoListItem>[] = [
   {
@@ -110,10 +98,6 @@ interface Props {
 
 export function AdvogadoDataTable({ promise }: Props) {
   const data = use(promise);
-  const [openModal, setOpenModal] = useState(false);
-  const [search, setSearch] = useState("");
-  const [tipo, setTipo] = useState<"all" | TipoAdvogado>("all");
-
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -122,68 +106,24 @@ export function AdvogadoDataTable({ promise }: Props) {
     { id: "nomeCompleto", desc: false },
   ]);
 
-  const filteredData = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return data.filter((item) => {
-      const textMatch =
-        term.length === 0 ||
-        item.nomeCompleto.toLowerCase().includes(term) ||
-        item.numeroCedula.toLowerCase().includes(term) ||
-        item.telefone.toLowerCase().includes(term);
-
-      const tipoMatch = tipo === "all" ? true : item.tipoAdvogado === tipo;
-
-      return textMatch && tipoMatch;
-    });
-  }, [data, search, tipo]);
-
   const table = useReactTable({
     columns,
-    data: filteredData,
-    pageCount: Math.ceil((filteredData.length || 0) / pagination.pageSize),
+    data,
+    pageCount: Math.ceil((data.length || 0) / pagination.pageSize),
     getRowId: (row) => String(row.id ?? row.numeroCedula),
     state: { pagination, sorting },
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
   return (
     <>
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="grid w-full gap-3 sm:max-w-3xl sm:grid-cols-2">
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Pesquisar por nome, cédula ou telefone..."
-          />
-          <Select
-            value={tipo}
-            onValueChange={(v) => setTipo(v as any)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value={TipoAdvogado.DEFESA}>Defesa</SelectItem>
-              <SelectItem value={TipoAdvogado.ACUSACAO}>Acusação</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button onClick={() => setOpenModal(true)} className="shrink-0">
-          <CirclePlus className="h-4 w-4" />
-          Registar advogado
-        </Button>
-      </div>
-
       <DataGrid
         table={table}
-        recordCount={filteredData.length}
+        recordCount={data.length}
         tableLayout={{
           headerSticky: true,
           headerBorder: true,
@@ -202,8 +142,6 @@ export function AdvogadoDataTable({ promise }: Props) {
           <DataGridPagination />
         </div>
       </DataGrid>
-
-      <AddAdvogadoModal open={openModal} setOpen={setOpenModal} />
     </>
   );
 }

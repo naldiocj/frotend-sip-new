@@ -38,6 +38,9 @@ import {
   CheckCircle2,
   History,
   Target,
+  Package,
+  Bell,
+  FileSignature,
 } from "lucide-react";
 import {
   AreaChart,
@@ -122,7 +125,9 @@ function StatCard({
                 ) : (
                   <TrendingDown className="h-3 w-3 text-rose-500" />
                 )}
-                <span className="text-[9px] text-muted-foreground">{trend}</span>
+                <span className="text-[9px] text-muted-foreground">
+                  {trend}
+                </span>
               </div>
             )}
           </div>
@@ -257,8 +262,12 @@ interface DashboardProps {
   processos?: any[];
   queixosos?: any[];
   arguidos?: any[];
-testemunhas?: any[];
+  testemunhas?: any[];
   advogados?: any[];
+  mandatos?: any[];
+  despachos?: any[];
+  remessas?: any[];
+  notificacoes?: any[];
 }
 
 export function InstructorDashboard({
@@ -267,6 +276,10 @@ export function InstructorDashboard({
   arguidos = [],
   testemunhas = [],
   advogados = [],
+  mandatos = [],
+  despachos = [],
+  remessas = [],
+  notificacoes = [],
 }: DashboardProps) {
   const totalProcessos = processos.length;
   const processosEmInstrucao = processos.filter(
@@ -302,9 +315,36 @@ export function InstructorDashboard({
   const totalTestemunhas = testemunhas?.length || 0;
   const totalAdvogados = advogados?.length || 0;
 
+  const totalMandados = mandatos?.length || 0;
+  const mandatosPendentes = mandatos?.filter((m: any) => m.estado === "PENDENTE").length || 0;
+  const mandatosEmExecucao = mandatos?.filter((m: any) => m.estado === "EM_EXECUCAO").length || 0;
+  const mandatosCumpridos = mandatos?.filter((m: any) => m.estado === "CUMPRIDO").length || 0;
+  const mandatosCancelados = mandatos?.filter((m: any) => m.estado === "CANCELADO").length || 0;
+
+  const totalDespachos = despachos?.length || 0;
+  const despachosFinalizados = despachos?.filter((d: any) => d.isFinalizado).length || 0;
+  const despachosPendentes = despachos?.filter((d: any) => !d.isFinalizado).length || 0;
+
+  const totalRemessas = remessas?.length || 0;
+  const remessasRecebidas = remessas?.filter((r: any) => r.status === "RECEBIDO").length || 0;
+  const remessasEmTransito = remessas?.filter((r: any) => r.status === "EM_TRANSITO").length || 0;
+  const remessasPendentes = remessas?.filter((r: any) => r.status === "PENDENTE").length || 0;
+
+  const totalNotificacoes = notificacoes?.length || 0;
+  const notificacoesNaoLidas = notificacoes?.filter((n: any) => !n.lida).length || 0;
+  const notificacoesNaoLidasPorTipo = {
+    INFO: notificacoes?.filter((n: any) => !n.lida && n.tipo === "INFO").length || 0,
+    AVISO: notificacoes?.filter((n: any) => !n.lida && n.tipo === "AVISO").length || 0,
+    URGENTE: notificacoes?.filter((n: any) => !n.lida && n.tipo === "URGENTE").length || 0,
+    SUCESSO: notificacoes?.filter((n: any) => !n.lida && n.tipo === "SUCESSO").length || 0,
+  };
+
   const recentCases = processos
     .slice()
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    )
     .slice(0, 5)
     .map((p) => ({
       id: p.id,
@@ -336,10 +376,30 @@ export function InstructorDashboard({
     return acc;
   }, {});
 
-  const evolucaoChartData = Object.entries(evolucaoData).map(([name, value]) => ({
-    name,
-    Processos: value,
-  }));
+  const evolucaoChartData = Object.entries(evolucaoData).map(
+    ([name, value]) => ({
+      name,
+      Processos: value,
+    }),
+  );
+
+  const mandatoStats = [
+    { name: "Pendentes", value: mandatosPendentes },
+    { name: "Em Execução", value: mandatosEmExecucao },
+    { name: "Cumpridos", value: mandatosCumpridos },
+    { name: "Cancelados", value: mandatosCancelados },
+  ];
+
+  const remessaStats = [
+    { name: "Recebidas", value: remessasRecebidas },
+    { name: "Em Trânsito", value: remessasEmTransito },
+    { name: "Pendentes", value: remessasPendentes },
+  ];
+
+  const notificacaoStats = [
+    { name: "Lidas", value: totalNotificacoes - notificacoesNaoLidas },
+    { name: "Não Lidas", value: notificacoesNaoLidas },
+  ];
 
   return (
     <div className="space-y-6">
@@ -390,6 +450,42 @@ export function InstructorDashboard({
           icon={Ban}
           color="bg-red-100 text-red-700"
         />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard
+          title="Mandados"
+          value={totalMandados}
+          icon={Scale}
+          color="bg-cyan-100 text-cyan-700"
+          trend="+15%"
+          trendUp
+        />
+        <StatCard
+          title="Pendentes"
+          value={mandatosPendentes}
+          icon={Clock}
+          color="bg-amber-100 text-amber-700"
+        />
+        <StatCard
+          title="Em Execução"
+          value={mandatosEmExecucao}
+          icon={Activity}
+          color="bg-blue-100 text-blue-700"
+        />
+        <StatCard
+          title="Cumpridos"
+          value={mandatosCumpridos}
+          icon={CheckCircle2}
+          color="bg-emerald-100 text-emerald-700"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard title="Despachos" value={totalDespachos} icon={FileSignature} color="bg-indigo-100 text-indigo-700" />
+        <StatCard title="Finalizados" value={despachosFinalizados} icon={CheckCircle2} color="bg-emerald-100 text-emerald-700" />
+        <StatCard title="Remessas" value={totalRemessas} icon={Package} color="bg-orange-100 text-orange-700" />
+        <StatCard title="Não Lidas" value={notificacoesNaoLidas} icon={Bell} color="bg-rose-100 text-rose-700" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -464,7 +560,9 @@ export function InstructorDashboard({
                   </div>
                   <div>
                     <p className="text-sm font-medium">Arguidos</p>
-                    <p className="text-xs text-muted-foreground">identificados</p>
+                    <p className="text-xs text-muted-foreground">
+                      identificados
+                    </p>
                   </div>
                 </div>
                 <span className="text-xl font-bold">{totalArguidos}</span>
@@ -501,6 +599,72 @@ export function InstructorDashboard({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="border-none shadow-md">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Scale className="h-4 w-4 text-cyan-600" />
+              Mandados
+            </CardTitle>
+            <CardDescription>Distribuição por estado</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <StatusPieChart data={mandatoStats} />
+          </CardContent>
+        </Card>
+
+        <Card className="border-none shadow-md">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Package className="h-4 w-4 text-orange-600" />
+              Remessas
+            </CardTitle>
+            <CardDescription>Status das remessas</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <StatusPieChart data={remessaStats} />
+          </CardContent>
+        </Card>
+
+        <Card className="border-none shadow-md">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Bell className="h-4 w-4 text-rose-600" />
+              Notificações
+            </CardTitle>
+            <CardDescription>Não lidas por tipo</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900">
+                <span className="text-sm font-medium">Info</span>
+                <Badge variant="outline" className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                  {notificacoesNaoLidasPorTipo.INFO}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900">
+                <span className="text-sm font-medium">Aviso</span>
+                <Badge variant="outline" className="bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+                  {notificacoesNaoLidasPorTipo.AVISO}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900">
+                <span className="text-sm font-medium">Urgente</span>
+                <Badge variant="outline" className="bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">
+                  {notificacoesNaoLidasPorTipo.URGENTE}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900">
+                <span className="text-sm font-medium">Sucesso</span>
+                <Badge variant="outline" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                  {notificacoesNaoLidasPorTipo.SUCESSO}
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2 border-none shadow-md">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
@@ -519,13 +683,17 @@ export function InstructorDashboard({
                   <TableHead className="font-semibold">Tipo</TableHead>
                   <TableHead className="font-semibold">Crime</TableHead>
                   <TableHead className="font-semibold">Estado</TableHead>
-                  <TableHead className="font-semibold text-right">Data</TableHead>
+                  <TableHead className="font-semibold text-right">
+                    Data
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {recentCases.map((c) => (
                   <TableRow key={c.id} className="border-muted/50">
-                    <TableCell className="font-medium text-primary/90">{c.num}</TableCell>
+                    <TableCell className="font-medium text-primary/90">
+                      {c.num}
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-[10px]">
                         {c.tipo || "NORMAL"}
@@ -579,7 +747,9 @@ export function InstructorDashboard({
                   <div className="flex items-center gap-3">
                     <Ban className="h-4 w-4 text-red-600" />
                     <div className="flex-1">
-                      <p className="text-sm font-medium">{processosComDetido} com detido</p>
+                      <p className="text-sm font-medium">
+                        {processosComDetido} com detido
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         Urgente conclusão
                       </p>

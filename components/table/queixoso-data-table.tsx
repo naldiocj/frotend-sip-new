@@ -1,6 +1,5 @@
 "use client";
 
-import { AddQueixosoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-queixoso-modal";
 import {
   DataGrid,
   DataGridContainer,
@@ -8,29 +7,18 @@ import {
 import { DataGridColumnHeader } from "@/components/reui/data-grid/data-grid-column-header";
 import { DataGridPagination } from "@/components/reui/data-grid/data-grid-pagination";
 import { DataGridTable } from "@/components/reui/data-grid/data-grid-table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { QueixosoListItem } from "@/lib/dto/queixoso.dto";
 import {
   ColumnDef,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   PaginationState,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { CirclePlus } from "lucide-react";
-import { use, useMemo, useState } from "react";
+import { use, useState } from "react";
 
 const columns: ColumnDef<QueixosoListItem>[] = [
   {
@@ -115,9 +103,6 @@ interface Props {
 
 export function QueixosoDataTable({ promise }: Props) {
   const data = use(promise);
-  const [openModal, setOpenModal] = useState(false);
-  const [search, setSearch] = useState("");
-  const [estadoCivil, setEstadoCivil] = useState("all");
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -126,75 +111,24 @@ export function QueixosoDataTable({ promise }: Props) {
     { id: "nomeCompleto", desc: false },
   ]);
 
-  const filteredData = useMemo(() => {
-    const term = search.trim().toLowerCase();
-    return data.filter((item) => {
-      const textMatch =
-        term.length === 0 ||
-        item.nomeCompleto.toLowerCase().includes(term) ||
-        item.numeroBi.toLowerCase().includes(term) ||
-        item.telefone.toLowerCase().includes(term) ||
-        item.email.toLowerCase().includes(term);
-
-      const estadoMatch =
-        estadoCivil === "all" ? true : item.estadoCivil === estadoCivil;
-
-      return textMatch && estadoMatch;
-    });
-  }, [data, search, estadoCivil]);
-
-  const estados = useMemo(
-    () => Array.from(new Set(data.map((item) => item.estadoCivil))),
-    [data],
-  );
-
   const table = useReactTable({
     columns,
-    data: filteredData,
-    pageCount: Math.ceil((filteredData.length || 0) / pagination.pageSize),
+    data,
+    pageCount: Math.ceil((data.length || 0) / pagination.pageSize),
     getRowId: (row) => String(row.id ?? row.numeroBi),
     state: { pagination, sorting },
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
 
   return (
     <>
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="grid w-full gap-3 sm:max-w-3xl sm:grid-cols-2">
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Pesquisar por nome, BI, telefone ou email..."
-          />
-          <Select value={estadoCivil} onValueChange={setEstadoCivil}>
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por estado civil" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os estados civis</SelectItem>
-              {estados.map((estado) => (
-                <SelectItem key={estado} value={estado}>
-                  {estado}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <Button onClick={() => setOpenModal(true)} className="shrink-0">
-          <CirclePlus className="h-4 w-4" />
-          Registar queixoso
-        </Button>
-      </div>
-
       <DataGrid
         table={table}
-        recordCount={filteredData.length}
+        recordCount={data.length}
         tableLayout={{
           headerSticky: true,
           headerBorder: true,
@@ -213,8 +147,6 @@ export function QueixosoDataTable({ promise }: Props) {
           <DataGridPagination />
         </div>
       </DataGrid>
-
-      <AddQueixosoModal open={openModal} setOpen={setOpenModal} />
     </>
   );
 }

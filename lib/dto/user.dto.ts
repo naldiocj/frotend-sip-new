@@ -1,15 +1,8 @@
-import { RoleDTO } from "./role.dto";
-
-/**
- * Type definition for a generic user object.
- * Extend this interface to match your application's user model.
- */
 export interface User {
   id: string;
   name: string;
   email: string;
   roles: Role[];
-  // Add any additional user properties here
 }
 
 interface Role {
@@ -17,21 +10,36 @@ interface Role {
   name: string;
 }
 
-export interface UserListDTO {
-  id: string;
-  name: string;
-  email: string;
-  roles: Role[];
-}
-
 export interface UserDTO {
   id: number;
   name: string;
   email: string;
-  phoneNumber: string;
-  direcao: { id: string; nome: string };
-  roles: RoleDTO[];
-  active: boolean;
+  phoneNumber?: string;
+  password?: string;
+  emailVerified?: boolean;
+  provider?: "LOCAL" | "GOOGLE" | "FACEBOOK";
+  providerId?: string;
+  roles: { id: number; name: string }[];
+  direcao?: { id: string; nome: string };
+  active?: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface CreateUserDTO {
+  name: string;
+  email: string;
+  phoneNumber?: string;
+  password?: string;
+  emailVerified?: boolean;
+  provider?: "LOCAL" | "GOOGLE" | "FACEBOOK";
+  providerId?: string;
+  roleIds?: number[];
+  active?: boolean;
+}
+
+export interface RoleDTO {
+  id: number;
+  name: string;
+  description?: string;
 }

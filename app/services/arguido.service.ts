@@ -11,7 +11,7 @@ export async function getArguidos(query?: string) {
       next: { tags: ["get-arguidos"] },
     }).get(`/arguidos${query ? "?term=" + query : ""}`);
 
-    return response as ArguidoListItem[];
+    return response.data as ArguidoListItem[];
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(

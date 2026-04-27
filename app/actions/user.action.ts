@@ -1,6 +1,6 @@
 "use server";
 
-import { User } from "@/lib/dto/user.dto";
+import { UserDTO, User } from "@/lib/dto/user.dto";
 import { getSession } from "@/lib/session";
 import { CreateUserDTO, createUser, deleteUser as deleteUserService } from "@/app/services/user.service";
 
@@ -57,7 +57,7 @@ export async function registerUser(formData: CreateUserDTO) {
   }
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUserAction(id: string) {
   try {
     const user = await deleteUserService(id);
 

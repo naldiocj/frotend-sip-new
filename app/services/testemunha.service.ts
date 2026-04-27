@@ -11,7 +11,7 @@ export async function getTestemunhas(query?: string) {
       next: { tags: ["get-testemunhas"] },
     }).get(`/testemunhas${query ? "?term=" + query : ""}`);
 
-    return response as TestemunhaListItem[];
+    return response.data as TestemunhaListItem[];
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(
@@ -20,4 +20,3 @@ export async function getTestemunhas(query?: string) {
     );
   }
 }
-

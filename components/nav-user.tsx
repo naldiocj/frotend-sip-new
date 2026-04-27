@@ -24,6 +24,7 @@ import {
   EllipsisVerticalIcon,
   LogOutIcon,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export function NavUser() {
@@ -85,9 +86,14 @@ export function NavUser() {
             sideOffset={10}
           >
             <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer transition hover:bg-primary/10 hover:text-primary">
-                <CircleUserRoundIcon className="mr-2 size-4" />
-                Perfil
+              <DropdownMenuItem
+                asChild
+                className="cursor-pointer transition hover:bg-primary/10 hover:text-primary"
+              >
+                <Link href="/perfil">
+                  <CircleUserRoundIcon className="mr-2 size-4" />
+                  Perfil
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

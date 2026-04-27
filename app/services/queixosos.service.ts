@@ -11,7 +11,7 @@ export async function getQueixosos(query?: string) {
       next: { tags: ["get-queixosos"] },
     }).get(`/queixosos${query ? "?term=" + query : ""}`);
 
-    return response as QueixosoListItem[];
+    return response.data as QueixosoListItem[];
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(

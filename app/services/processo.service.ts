@@ -18,7 +18,7 @@ export async function getProcessos(query?: string) {
       next: { tags: ["get-processos"] },
     }).get(`/processos${query ? "?term=" + query : ""}`);
 
-    return response as ProcessoListItem[];
+    return response.data as ProcessoListItem[];
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(
