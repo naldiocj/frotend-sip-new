@@ -3,6 +3,7 @@
 import { AddAdvogadoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-advogado-modal";
 import { AddArguidoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-arguido-modal";
 import { AddQueixosoModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-queixoso-modal";
+import { AddTestemunhaModal } from "@/app/(admin)/instrutor/processos/[id]/participantes/_modals/add-testemunha-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +29,7 @@ export function ParticipantesDropdown() {
   const [openQueixosoModal, setQueixosoModal] = useState(false);
   const [openArguidoModal, setArguidoModal] = useState(false);
   const [openAdvogadoModal, setAdvogadoModal] = useState(false);
+  const [openTestemunhaModal, setTestemunhaModal] = useState(false);
 
   return (
     <div className="flex items-center">
@@ -64,7 +66,7 @@ export function ParticipantesDropdown() {
                   <BriefcaseBusiness aria-hidden="true" />
                   Advogados
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTestemunhaModal(true)}>
                   <Eye aria-hidden="true" />
                   Testemunhas
                 </DropdownMenuItem>
@@ -78,6 +80,10 @@ export function ParticipantesDropdown() {
       <AddQueixosoModal open={openQueixosoModal} setOpen={setQueixosoModal} />
       <AddArguidoModal open={openArguidoModal} setOpen={setArguidoModal} />
       <AddAdvogadoModal open={openAdvogadoModal} setOpen={setAdvogadoModal} />
+      <AddTestemunhaModal
+        open={openTestemunhaModal}
+        setOpen={setTestemunhaModal}
+      />
     </div>
   );
 }

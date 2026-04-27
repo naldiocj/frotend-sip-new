@@ -19,6 +19,7 @@ export interface ProcessoDocumentoItem {
   tipo: string;
   descricao: string;
   processoNumero: string;
+  documento: { conteudo: string; pagina: number };
   url: string;
   createdAt: string;
   updatedAt: string;

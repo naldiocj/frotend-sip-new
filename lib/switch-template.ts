@@ -62,6 +62,6 @@ export function switchTemplate(type: string) {
     case "CAPA_CARTA_PRECATORIA":
       return CapaCartaPrecatoriaTemplate;
     default:
-      throw new Error(`Template not found for type: ${type}`);
+      return null;
   }
 }

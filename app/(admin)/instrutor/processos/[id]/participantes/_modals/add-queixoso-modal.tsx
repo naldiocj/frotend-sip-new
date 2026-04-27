@@ -34,10 +34,16 @@ import { toast } from "sonner";
 interface iAppProps {
   open: boolean;
   setOpen: (state: boolean) => void;
+  processoNumero?: string;
 }
 
-export function AddQueixosoModal({ open, setOpen }: iAppProps) {
-  const { id } = useParams();
+export function AddQueixosoModal({
+  open,
+  setOpen,
+  processoNumero,
+}: iAppProps) {
+  const { id } = useParams<{ id?: string }>();
+  const resolvedProcessoNumero = processoNumero ?? id ?? "";
   const [isPending, startTransition] = useTransition();
   const form = useForm<QueixosoData>({
     resolver: zodResolver(createQueixosoSchema),
@@ -55,7 +61,7 @@ export function AddQueixosoModal({ open, setOpen }: iAppProps) {
       nomePai: "Luis Joaquim",
       numeroBi: "1234567890",
       telefone: "+244 933 333 333",
-      processoNumero: id as string,
+      processoNumero: resolvedProcessoNumero,
     },
   });
 
@@ -87,6 +93,23 @@ export function AddQueixosoModal({ open, setOpen }: iAppProps) {
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           {/* <pre>{JSON.stringify(form.formState.errors, null, 2)}</pre> */}
+          <Controller
+            control={form.control}
+            name="processoNumero"
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel>Número do Processo</FieldLabel>
+                <Input
+                  {...field}
+                  readOnly={Boolean(resolvedProcessoNumero)}
+                  placeholder="Ex: 123/2026"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           <Controller
             control={form.control}
             name="nomeCompleto"

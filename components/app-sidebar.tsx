@@ -22,10 +22,12 @@ import {
   Building2,
   CircleHelp,
   ClipboardPlus,
+  Eye,
   FileCheck,
   FileInput,
   Folder,
   FolderOpen,
+  Gavel,
   History,
   LampDesk,
   LayoutDashboard,
@@ -33,6 +35,7 @@ import {
   NotebookPen,
   Settings2,
   ShieldAlert,
+  UserRound,
   Users,
 } from "lucide-react";
 
@@ -141,14 +144,34 @@ const data = {
       icon: <FolderOpen className="h-4 w-4" />,
     },
     {
-      title: "Detidos",
-      url: "/admin/detidos",
-      icon: <ShieldAlert className="h-4 w-4" />,
+      title: "Queixosos",
+      url: "/instrutor/queixosos",
+      icon: <UserRound className="h-4 w-4" />,
     },
+    {
+      title: "Arguidos",
+      url: "/instrutor/arguidos",
+      icon: <Gavel className="h-4 w-4" />,
+    },
+    {
+      title: "Advogados",
+      url: "/instrutor/advogados",
+      icon: <BriefcaseBusiness className="h-4 w-4" />,
+    },
+    {
+      title: "Testemunhas",
+      url: "/instrutor/testemunhas",
+      icon: <Eye className="h-4 w-4" />,
+    },
+    // {
+    //   title: "Detidos",
+    //   url: "/admin/detidos",
+    //   icon: <ShieldAlert className="h-4 w-4" />,
+    // },
     { title: "Mandados", url: "#", icon: <FileCheck className="h-4 w-4" /> },
     {
       title: "Despachos",
-      url: "/secretaria/direccoes",
+      url: "/instrutor/despachos",
       icon: <NotebookPen className="h-4 w-4" />,
     },
     {
@@ -192,7 +215,7 @@ const data = {
     },
     {
       title: "Despachos",
-      url: "/secretaria/direccoes",
+      url: "/secretaria/despachos",
       icon: <NotebookPen className="h-4 w-4" />,
     },
     { title: "Definições", url: "#", icon: <Settings2 className="h-4 w-4" /> },

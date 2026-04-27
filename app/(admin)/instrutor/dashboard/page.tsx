@@ -1,4 +1,9 @@
 import { getUserSession } from "@/app/services/user.service";
+import { getProcessos } from "@/app/services/processo.service";
+import { getQueixosos } from "@/app/services/queixosos.service";
+import { getArguidos } from "@/app/services/arguido.service";
+import { getTestemunhas } from "@/app/services/testemunha.service";
+import { getAdvogados } from "@/app/services/advogado.service";
 import { AdminDashboard } from "@/components/dashboard/admin-dashboard";
 import { DirectorDashboard } from "@/components/dashboard/director-dashboard";
 import { InstructorDashboard } from "@/components/dashboard/instructor-dashboard";
@@ -15,6 +20,20 @@ export default async function Page() {
   const roles: RoleDTO[] = session.data?.roles ?? [];
   const roleNames = roles.map((role) => role.name);
 
+  const processosPromise = getProcessos();
+  const queixososPromise = getQueixosos();
+  const arguidosPromise = getArguidos();
+  const testemunhasPromise = getTestemunhas();
+  const advogadosPromise = getAdvogados();
+
+  const [processos, queixosos, arguidos, testemunhas, advogados] = await Promise.all([
+    processosPromise,
+    queixososPromise,
+    arguidosPromise,
+    testemunhasPromise,
+    advogadosPromise,
+  ]);
+
   return (
     <div className="px-4">
       {roleNames.includes(ROLES.ADMIN) && <AdminDashboard />}
@@ -22,7 +41,13 @@ export default async function Page() {
         <DirectorDashboard />
       )}
       {roleNames.length === 1 && roleNames.includes(ROLES.INSTRUTOR) && (
-        <InstructorDashboard />
+        <InstructorDashboard
+          processos={processos}
+          queixosos={queixosos}
+          arguidos={arguidos}
+          testemunhas={testemunhas}
+          advogados={advogados}
+        />
       )}
       {roleNames.length === 1 && roleNames.includes(ROLES.SECRETARIA) && (
         <SecretariaDashboard />

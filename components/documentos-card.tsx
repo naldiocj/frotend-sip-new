@@ -1,6 +1,7 @@
 "use client";
 
 import { convertData } from "@/lib/date-utils";
+import { DOCUMENT_NAMES } from "@/lib/document-names";
 import { ProcessoDocumentoItem } from "@/lib/dto/processo.dto";
 import { Calendar, Edit2, MoreVertical, Timer, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -115,7 +116,9 @@ export function DocumentosCard({ data }: iAppProps) {
                   </DropdownMenu>
                 </div>
                 <CardTitle className="mt-2 text-base font-semibold text-foreground">
-                  {documento.tipo}
+                  {Object.keys(DOCUMENT_NAMES).includes(documento.tipo)
+                    ? DOCUMENT_NAMES[documento.tipo]
+                    : documento.tipo}
                 </CardTitle>
               </CardHeader>
 
@@ -125,7 +128,7 @@ export function DocumentosCard({ data }: iAppProps) {
                     <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
                     <span className="font-medium text-foreground">Página</span>
                     <span className="font-mono text-muted-foreground">
-                      {documento.id}
+                      {documento.documento.pagina}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -141,7 +144,11 @@ export function DocumentosCard({ data }: iAppProps) {
               </CardContent>
 
               <CardFooter className="border-t border-border/60 bg-muted/30 px-4 py-3 dark:bg-muted/10">
-                <GroupButtonDocumentos id={documento.id} url={documento.url} />
+                <GroupButtonDocumentos
+                  id={documento.id}
+                  url={documento.url}
+                  documento={documento.documento}
+                />
               </CardFooter>
             </Card>
           ))

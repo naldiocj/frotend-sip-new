@@ -1,5 +1,6 @@
 "use client";
 
+import { createTestemunha } from "@/app/services/participante.service";
 import { SubmitButton } from "@/components/submit-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,30 +20,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import { createArguidoSchema } from "@/lib/schemas/participante.schema";
-
-import { ArguidoData } from "@/lib/dto/participante.dto";
-
-import { createArguido } from "@/app/services/participante.service";
+import { TestemunhaData } from "@/lib/dto/participante.dto";
+import { createTestemunhaSchema } from "@/lib/schemas/participante.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams } from "next/navigation";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-interface iAppProps {
+interface Props {
   open: boolean;
   setOpen: (state: boolean) => void;
   processoNumero?: string;
 }
 
-export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
+export function AddTestemunhaModal({ open, setOpen, processoNumero }: Props) {
   const { id } = useParams<{ id?: string }>();
   const resolvedProcessoNumero = processoNumero ?? id ?? "";
   const [isPending, startTransition] = useTransition();
-  const form = useForm<ArguidoData>({
-    resolver: zodResolver(createArguidoSchema),
+
+  const form = useForm<TestemunhaData>({
+    resolver: zodResolver(createTestemunhaSchema),
     defaultValues: {
       profissao: "Engenheiro",
       dataEmissaoBi: "2026-04-02",
@@ -61,19 +59,17 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
     },
   });
 
-  function onSubmit(data: ArguidoData) {
+  function onSubmit(data: TestemunhaData) {
     startTransition(async () => {
       try {
-        await createArguido(data);
+        await createTestemunha(data);
         toast.success("SUCESSO", {
-          description: "Arguido registado com sucesso!",
+          description: "Testemunha registada com sucesso!",
         });
         setOpen(false);
         form.reset();
       } catch (error: any) {
-        toast.error("ERRO", {
-          description: error?.message,
-        });
+        toast.error("ERRO", { description: error?.message });
       }
     });
   }
@@ -82,13 +78,13 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Arguido</DialogTitle>
+          <DialogTitle>Testemunha</DialogTitle>
           <DialogDescription>
-            Adicione um arguido a este processo.
+            Adicione uma testemunha a este processo.
           </DialogDescription>
         </DialogHeader>
+
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {/* <pre>{JSON.stringify(form.formState.errors, null, 2)}</pre> */}
           <Controller
             control={form.control}
             name="processoNumero"
@@ -106,6 +102,7 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
               </Field>
             )}
           />
+
           <Controller
             control={form.control}
             name="nomeCompleto"
@@ -133,6 +130,7 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
               </Field>
             )}
           />
+
           <Controller
             control={form.control}
             name="nomeMae"
@@ -146,6 +144,7 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
               </Field>
             )}
           />
+
           <div className="grid grid-cols-2 gap-4">
             <Controller
               control={form.control}
@@ -192,6 +191,7 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
               )}
             />
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <Controller
               control={form.control}
@@ -220,6 +220,7 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
               )}
             />
           </div>
+
           <Controller
             control={form.control}
             name="profissao"
@@ -233,6 +234,7 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
               </Field>
             )}
           />
+
           <div className="grid grid-cols-2 gap-4">
             <Controller
               control={form.control}
@@ -261,6 +263,7 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
               )}
             />
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <Controller
               control={form.control}
@@ -289,6 +292,7 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
               )}
             />
           </div>
+
           <Controller
             control={form.control}
             name="endereco"
@@ -321,3 +325,4 @@ export function AddArguidoModal({ open, setOpen, processoNumero }: iAppProps) {
     </Dialog>
   );
 }
+

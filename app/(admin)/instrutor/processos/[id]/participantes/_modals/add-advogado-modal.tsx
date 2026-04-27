@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Field, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -33,10 +33,12 @@ import { toast } from "sonner";
 interface iAppProps {
   open: boolean;
   setOpen: (state: boolean) => void;
+  processoNumero?: string;
 }
 
-export function AddAdvogadoModal({ open, setOpen }: iAppProps) {
-  const { id } = useParams();
+export function AddAdvogadoModal({ open, setOpen, processoNumero }: iAppProps) {
+  const { id } = useParams<{ id?: string }>();
+  const resolvedProcessoNumero = processoNumero ?? id ?? "";
   const [isPending, startTransition] = useTransition();
   const form = useForm<AdvogadoData>({
     resolver: zodResolver(createAdvogadoSchema),
@@ -44,7 +46,7 @@ export function AddAdvogadoModal({ open, setOpen }: iAppProps) {
       nomeCompleto: "",
       numeroCedula: "",
       telefone: "",
-      processoNumero: id as string,
+      processoNumero: resolvedProcessoNumero,
       tipoAdvogado: "DEFESA",
     },
   });
@@ -76,6 +78,23 @@ export function AddAdvogadoModal({ open, setOpen }: iAppProps) {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <Controller
+            control={form.control}
+            name="processoNumero"
+            render={({ field, fieldState }) => (
+              <Field>
+                <FieldLabel>Número do Processo</FieldLabel>
+                <Input
+                  {...field}
+                  readOnly={Boolean(resolvedProcessoNumero)}
+                  placeholder="Ex: 123/2026"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           <Controller
             control={form.control}
             name="nomeCompleto"

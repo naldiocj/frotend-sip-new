@@ -298,7 +298,7 @@ export default function DynamicDocumentForm({
               </div>
             </div>
             <div ref={templateRef}>
-              <Template preview={preview} />
+              {Template ? <Template preview={preview} /> : null}
             </div>
           </section>
         </div>

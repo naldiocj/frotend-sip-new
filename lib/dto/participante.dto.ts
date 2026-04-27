@@ -61,3 +61,20 @@ export type AdvogadoData = {
   tipoAdvogado: "DEFESA" | "ACUSACAO";
   processoNumero: string;
 };
+
+export type TestemunhaData = {
+  nomeCompleto: string;
+  nomePai: string;
+  nomeMae: string;
+  estadoCivil: string;
+  idade: number;
+  dataNascimento: string;
+  naturalidade: string;
+  profissao: string;
+  numeroBi: string;
+  dataEmissaoBi: string;
+  email: string;
+  telefone: string;
+  endereco: string;
+  processoNumero: string;
+};

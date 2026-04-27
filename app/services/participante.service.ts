@@ -6,6 +6,7 @@ import {
   ArguidoData,
   ParticipanteData,
   QueixosoData,
+  TestemunhaData,
 } from "@/lib/dto/participante.dto";
 import { getSession } from "@/lib/session";
 import { revalidateTag } from "next/cache";
@@ -64,6 +65,19 @@ export async function createAdvogado(data: AdvogadoData) {
     console.log(error.response?.data);
     throw new Error(
       error?.response?.data?.message || "Impossível registar o arguido",
+    );
+  }
+}
+
+export async function createTestemunha(data: TestemunhaData) {
+  try {
+    const token = await getSession();
+    await apiWithToken(token).post("/testemunhas", data);
+    revalidateTag("get-participantes", {});
+  } catch (error: any) {
+    console.log(error.response?.data);
+    throw new Error(
+      error?.response?.data?.message || "Impossível registar a testemunha",
     );
   }
 }

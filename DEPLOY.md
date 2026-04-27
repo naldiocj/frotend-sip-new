@@ -154,3 +154,7 @@ server {
 ---
 
 Este ficheiro ajudará a manter o padrão do deploy se precisares de formatar o servidor ou escalar a aplicação. Sucesso com o **SIP**!
+
+## Run all services
+
+docker start a15a75d9a545 && sudo systemctl restart sip.service && pm2 start ecosystem.config.js
