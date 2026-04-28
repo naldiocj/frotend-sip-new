@@ -128,7 +128,7 @@ export function DocumentosCard({ data }: iAppProps) {
                     <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
                     <span className="font-medium text-foreground">Página</span>
                     <span className="font-mono text-muted-foreground">
-                      {documento.documento.pagina}
+                      {documento?.documento?.pagina}
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
