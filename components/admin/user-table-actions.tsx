@@ -1,12 +1,12 @@
 "use client";
 
-import * as React from "react";
+import { deleteUser } from "@/app/services/user.service";
+import { Button } from "@/components/ui/button";
+import { Edit3, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import * as React from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { deleteUser } from "@/app/actions/user.action";
-import { Edit3, Trash2 } from "lucide-react";
 
 interface UserTableActionsProps {
   id: string;
@@ -17,7 +17,9 @@ export function UserTableActions({ id }: UserTableActionsProps) {
   const [isPending, startTransition] = React.useTransition();
 
   async function handleDelete() {
-    const confirmed = window.confirm("Tem certeza que deseja apagar este utilizador?");
+    const confirmed = window.confirm(
+      "Tem certeza que deseja apagar este utilizador?",
+    );
 
     if (!confirmed) {
       return;

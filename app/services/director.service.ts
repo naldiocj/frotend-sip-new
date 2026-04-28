@@ -68,7 +68,7 @@ export async function getDirectorById(id: string) {
   }
 }
 
-export async function createDirector(data: DirectorDTO) {
+export async function createDirector(data: any) {
   await requiredUser();
 
   try {

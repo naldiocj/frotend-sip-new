@@ -1,4 +1,4 @@
-import { getInstrutores } from "@/app/services/director.service";
+import { getInstrutores } from "@/app/services/instrutor.service";
 import { getUserSession } from "@/app/services/user.service";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";

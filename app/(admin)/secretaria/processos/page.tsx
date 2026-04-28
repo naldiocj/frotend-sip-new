@@ -1,5 +1,5 @@
 import { getDireccoes } from "@/app/services/direccao.service";
-import { getInstrutores } from "@/app/services/director.service";
+import { getInstrutores } from "@/app/services/instrutor.service";
 import { getProcessos } from "@/app/services/processo.service";
 import { getTiposCrimes } from "@/app/services/tipo-crime.service";
 import { getUserSession } from "@/app/services/user.service";
@@ -33,7 +33,7 @@ export default async function Page({ searchParams }: PageProps) {
   const direccoesPromise = getDireccoes();
   const tiposCrimesPromise = getTiposCrimes();
   const { data } = await getUserSession();
-  const instrutoresPromise = getInstrutores(data?.direcao.id || "");
+  const instrutoresPromise = getInstrutores(data?.direcao!.id || "");
 
   const processos = await processosPromise;
   const refreshKey = processos.map((p) => p.id).join(",");

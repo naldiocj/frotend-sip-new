@@ -75,7 +75,7 @@ export async function deleteUser(id: string) {
     const token = await getSession();
     const response = await apiWithToken(token).delete(`/users/${id}`);
 
-    return response.data as UserDTO;
+    return response;
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(

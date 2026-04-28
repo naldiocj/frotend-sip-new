@@ -1,26 +1,27 @@
 "use client";
 
-import { useState, useMemo, useRef } from "react";
 import {
-  useReactTable,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  flexRender,
-  type SortingState,
-  type ColumnDef,
-} from "@tanstack/react-table";
-import { Search, ChevronLeft, ChevronRight, Eye, Pencil, Trash2, Plus, Upload, Download, FileSpreadsheet } from "lucide-react";
+  bulkCreateDirecao,
+  CreateDirecaoDTO,
+  DirecaoDTO,
+} from "@/app/services/direcao.service";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -30,22 +31,36 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState,
+} from "@tanstack/react-table";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Eye,
+  FileSpreadsheet,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  Upload,
+} from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { DirecaoDTO, CreateDirecaoDTO } from "@/lib/dto/direcao.dto";
-import { bulkCreateDirecao } from "@/app/services/direcao.service";
 
 interface PageProps {
   initialData: DirecaoDTO[];
 }
 
-const CSV_TEMPLATE = "nome,sigla,descricao\nDireção de Investigação Criminal,DIC,Responsável pela investigação criminal\nDireção de Polícia Judiciária,DPJ,Responsável pela polícia judiciária";
+const CSV_TEMPLATE =
+  "nome,sigla,descricao\nDireção de Investigação Criminal,DIC,Responsável pela investigação criminal\nDireção de Polícia Judiciária,DPJ,Responsável pela polícia judiciária";
 
 function downloadTemplate() {
   const blob = new Blob([CSV_TEMPLATE], { type: "text/csv;charset=utf-8;" });
@@ -92,8 +107,16 @@ export function DireccoesPageClient({ initialData }: PageProps) {
   const [bulkFile, setBulkFile] = useState<File | null>(null);
   const [bulkPreview, setBulkPreview] = useState<CreateDirecaoDTO[]>([]);
   const [isBulkLoading, setIsBulkLoading] = useState(false);
-  const [editForm, setEditForm] = useState({ nome: "", sigla: "", descricao: "" });
-  const [createForm, setCreateForm] = useState({ nome: "", sigla: "", descricao: "" });
+  const [editForm, setEditForm] = useState({
+    nome: "",
+    sigla: "",
+    descricao: "",
+  });
+  const [createForm, setCreateForm] = useState({
+    nome: "",
+    sigla: "",
+    descricao: "",
+  });
 
   const openViewModal = (direcao: DirecaoDTO) => setViewModal(direcao);
   const openEditModal = (direcao: DirecaoDTO) => {
@@ -132,7 +155,9 @@ export function DireccoesPageClient({ initialData }: PageProps) {
       setBulkPreview([]);
     } catch (error) {
       console.error("Bulk upload error:", error);
-      toast.error(error instanceof Error ? error.message : "Erro ao importar direções.");
+      toast.error(
+        error instanceof Error ? error.message : "Erro ao importar direções.",
+      );
     } finally {
       setIsBulkLoading(false);
     }
@@ -143,12 +168,16 @@ export function DireccoesPageClient({ initialData }: PageProps) {
       {
         accessorKey: "id",
         header: "ID",
-        cell: ({ row }) => <span className="text-muted-foreground">#{row.getValue("id")}</span>,
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">#{row.getValue("id")}</span>
+        ),
       },
       {
         accessorKey: "nome",
         header: "Nome",
-        cell: ({ row }) => <span className="font-medium">{row.getValue("nome")}</span>,
+        cell: ({ row }) => (
+          <span className="font-medium">{row.getValue("nome")}</span>
+        ),
       },
       {
         accessorKey: "sigla",
@@ -209,7 +238,7 @@ export function DireccoesPageClient({ initialData }: PageProps) {
         },
       },
     ],
-    []
+    [],
   );
 
   const table = useReactTable({
@@ -243,7 +272,11 @@ export function DireccoesPageClient({ initialData }: PageProps) {
             </div>
 
             <div className="flex items-center gap-4">
-              <Button variant="outline" className="gap-2" onClick={() => setBulkModal(true)}>
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => setBulkModal(true)}
+              >
                 <Upload className="h-4 w-4" />
                 Importar CSV
               </Button>
@@ -295,7 +328,10 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                           <TableHead key={header.id}>
                             {header.isPlaceholder
                               ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
+                              : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
                           </TableHead>
                         ))}
                       </TableRow>
@@ -307,14 +343,20 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                         <TableRow key={row.id}>
                           {row.getVisibleCells().map((cell) => (
                             <TableCell key={cell.id}>
-                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
                             </TableCell>
                           ))}
                         </TableRow>
                       ))
                     ) : (
                       <TableRow>
-                        <TableCell colSpan={columns.length} className="h-24 text-center">
+                        <TableCell
+                          colSpan={columns.length}
+                          className="h-24 text-center"
+                        >
                           Nenhum resultado encontrado.
                         </TableCell>
                       </TableRow>
@@ -325,7 +367,8 @@ export function DireccoesPageClient({ initialData }: PageProps) {
 
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">
-                  Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
+                  Página {table.getState().pagination.pageIndex + 1} de{" "}
+                  {table.getPageCount()}
                 </span>
                 <div className="flex items-center gap-2">
                   <Button
@@ -362,30 +405,44 @@ export function DireccoesPageClient({ initialData }: PageProps) {
             {viewModal && (
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right text-muted-foreground">Nome</Label>
+                  <Label className="text-right text-muted-foreground">
+                    Nome
+                  </Label>
                   <div className="col-span-3 font-medium">{viewModal.nome}</div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right text-muted-foreground">Sigla</Label>
+                  <Label className="text-right text-muted-foreground">
+                    Sigla
+                  </Label>
                   <div className="col-span-3">{viewModal.sigla || "—"}</div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right text-muted-foreground">Descrição</Label>
+                  <Label className="text-right text-muted-foreground">
+                    Descrição
+                  </Label>
                   <div className="col-span-3">{viewModal.descricao || "—"}</div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right text-muted-foreground">Criado em</Label>
+                  <Label className="text-right text-muted-foreground">
+                    Criado em
+                  </Label>
                   <div className="col-span-3">
                     {viewModal.createdAt
-                      ? new Date(viewModal.createdAt).toLocaleDateString("pt-BR")
+                      ? new Date(viewModal.createdAt).toLocaleDateString(
+                        "pt-BR",
+                      )
                       : "—"}
                   </div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label className="text-right text-muted-foreground">Atualizado em</Label>
+                  <Label className="text-right text-muted-foreground">
+                    Atualizado em
+                  </Label>
                   <div className="col-span-3">
                     {viewModal.updatedAt
-                      ? new Date(viewModal.updatedAt).toLocaleDateString("pt-BR")
+                      ? new Date(viewModal.updatedAt).toLocaleDateString(
+                        "pt-BR",
+                      )
                       : "—"}
                   </div>
                 </div>
@@ -441,7 +498,11 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                   />
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setEditModal(null)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setEditModal(null)}
+                  >
                     Cancelar
                   </Button>
                   <Button type="submit">Guardar Alterações</Button>
@@ -495,7 +556,11 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                 />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setCreateModal(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setCreateModal(false)}
+                >
                   Cancelar
                 </Button>
                 <Button type="submit">Criar Direção</Button>
@@ -516,7 +581,11 @@ export function DireccoesPageClient({ initialData }: PageProps) {
 
             <div className="space-y-4 py-4">
               <div className="flex items-center gap-4">
-                <Button variant="outline" className="gap-2" onClick={downloadTemplate}>
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={downloadTemplate}
+                >
                   <Download className="h-4 w-4" />
                   Baixar Modelo
                 </Button>
@@ -582,7 +651,9 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                 onClick={handleBulkUpload}
                 disabled={bulkPreview.length === 0 || isBulkLoading}
               >
-                {isBulkLoading ? "A importar..." : `Importar ${bulkPreview.length} registos`}
+                {isBulkLoading
+                  ? "A importar..."
+                  : `Importar ${bulkPreview.length} registos`}
               </Button>
             </DialogFooter>
           </DialogContent>
