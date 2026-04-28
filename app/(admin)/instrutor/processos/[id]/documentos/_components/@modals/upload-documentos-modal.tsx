@@ -13,12 +13,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { replaceChar } from "@/lib/utils";
+import { replaceChar } from "@/lib/utils-func";
 import { FolderOpen } from "lucide-react";
 import { useParams } from "next/navigation";
-import { UploadDocumento } from "../../_utils/types";
 import { useTransition } from "react";
 import { toast } from "sonner";
+import { UploadDocumento } from "../../_utils/types";
 
 interface iAppProps {
   formData: UploadDocumento;

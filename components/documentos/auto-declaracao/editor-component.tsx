@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { CreateAutoDeclaracaoDTO } from "@/lib/dto/documento.dto";
-import { replaceChar } from "@/lib/utils";
+import { replaceChar } from "@/lib/utils-func";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarDays, FileBadge2, FileText, MapPin } from "lucide-react";
 import Image from "next/image";

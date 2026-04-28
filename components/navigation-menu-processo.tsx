@@ -1,7 +1,8 @@
 "use client";
 
 import { INSTRUTOR_PATHS } from "@/lib/path";
-import { cn, toUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+import { toUrl } from "@/lib/utils-func";
 import { ClipboardList, FileText, FolderOpen, Users } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";

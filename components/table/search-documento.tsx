@@ -34,7 +34,7 @@ export default function SearchDocumento({ promise }: iAppProps) {
         placeholder="Pesquisar por número ou descrição..."
         onChange={(e) => setQuery(e.target.value)}
       />
-      <Button variant="outline" aria-label="Pesquisar por número ou descrição">
+      <Button variant="outline" className="h-auto" aria-label="Pesquisar por número ou descrição">
         <SearchIcon />
       </Button>
     </ButtonGroup>

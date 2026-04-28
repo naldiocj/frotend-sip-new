@@ -147,6 +147,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -157,6 +158,7 @@
     size: A4;
     margin: 0;
   }
+
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

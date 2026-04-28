@@ -4,7 +4,7 @@ import { createDocumento } from "@/app/services/documento.service";
 import { DOCUMENT_MODELS } from "@/lib/document-models";
 import { INSTRUTOR_PATHS } from "@/lib/path";
 import { switchTemplate } from "@/lib/switch-template";
-import { replaceChar, toUrl } from "@/lib/utils";
+import { replaceChar, toUrl } from "@/lib/utils-func";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";

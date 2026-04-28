@@ -25,6 +25,7 @@ export default function SearchAdvogado() {
       />
       <Button
         variant="outline"
+        className="h-auto"
         aria-label="Pesquisar advogado por nome, cédula ou telefone"
       >
         <SearchIcon />

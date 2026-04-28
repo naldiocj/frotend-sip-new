@@ -25,6 +25,7 @@ export default function SearchRemessa() {
       />
       <Button
         variant="outline"
+        className="h-auto"
         aria-label="Pesquisar remessa"
       >
         <SearchIcon />

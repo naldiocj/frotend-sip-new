@@ -30,7 +30,7 @@ import {
 } from "@/lib/date-utils";
 import { ProcessoListItem } from "@/lib/dto/processo.dto";
 import { INSTRUTOR_PATHS } from "@/lib/path";
-import { replaceAllChar } from "@/lib/utils";
+import { replaceAllChar } from "@/lib/utils-func";
 import {
   ColumnDef,
   getCoreRowModel,
@@ -43,7 +43,7 @@ import {
 } from "@tanstack/react-table";
 import { EllipsisVertical, FolderOpenDot, Trash } from "lucide-react";
 import Link from "next/link";
-import { use, useMemo, useState } from "react";
+import { use, useState } from "react";
 import BadgeTipoProcesso from "./badge-tipo-processo";
 
 /* ─── Column definitions ─────────────────────────────────────────────────── */

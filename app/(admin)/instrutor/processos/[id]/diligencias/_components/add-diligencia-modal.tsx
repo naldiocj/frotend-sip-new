@@ -34,7 +34,7 @@ import {
   CreateDiligenciaData,
   createDiligenciaSchema,
 } from "@/lib/schemas/diligencia.schema";
-import { replaceChar } from "@/lib/utils";
+import { replaceChar } from "@/lib/utils-func";
 
 export default function AddDiligenciaModal() {
   const { id } = useParams();

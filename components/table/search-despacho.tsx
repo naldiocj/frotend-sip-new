@@ -25,6 +25,7 @@ export default function SearchDespacho() {
       />
       <Button
         variant="outline"
+        className="h-auto"
         aria-label="Pesquisar despacho por processo, decisão ou autoridade"
       >
         <SearchIcon />

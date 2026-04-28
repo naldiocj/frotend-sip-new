@@ -25,6 +25,7 @@ export default function SearchArguido() {
       />
       <Button
         variant="outline"
+        className="h-auto"
         aria-label="Pesquisar arguido por nome, BI, telefone ou email"
       >
         <SearchIcon />

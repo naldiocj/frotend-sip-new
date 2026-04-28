@@ -7,14 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   convertData,
   convertEstadoProcessoToNormalCase,
   getBageEstadoProcesso,
 } from "@/lib/date-utils";
 import { ProcessoItem } from "@/lib/dto/processo.dto";
-import { getCrimeTexto } from "@/lib/utils";
+import { getCrimeTexto } from "@/lib/utils-func";
 import {
   AlertTriangle,
   Calendar,

@@ -29,7 +29,7 @@ export default function SearchMandado() {
           placeholder="Pesquisar por processo, requerido..."
           onChange={(e) => setQuery({ q: e.target.value })}
         />
-        <Button variant="outline" aria-label="Pesquisar">
+        <Button variant="outline" className="h-auto" aria-label="Pesquisar">
           <SearchIcon />
         </Button>
       </ButtonGroup>

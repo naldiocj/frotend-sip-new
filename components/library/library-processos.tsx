@@ -34,7 +34,7 @@ import { InstrutorDetailDTO } from "@/lib/dto/direcao.dto";
 import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { ProcessoListItem } from "@/lib/dto/processo.dto";
 import { INSTRUTOR_PATHS } from "@/lib/path";
-import { replaceAllChar } from "@/lib/utils";
+import { replaceAllChar } from "@/lib/utils-func";
 import {
   Calendar,
   ChevronRight,

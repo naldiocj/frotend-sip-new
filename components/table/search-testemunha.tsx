@@ -25,6 +25,7 @@ export default function SearchTestemunha() {
       />
       <Button
         variant="outline"
+        className="h-auto"
         aria-label="Pesquisar testemunha por nome, BI, telefone ou email"
       >
         <SearchIcon />

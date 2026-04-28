@@ -25,6 +25,7 @@ export default function SearchQueixoso() {
       />
       <Button
         variant="outline"
+        className="h-auto"
         aria-label="Pesquisar queixoso por nome, BI, telefone ou email"
       >
         <SearchIcon />

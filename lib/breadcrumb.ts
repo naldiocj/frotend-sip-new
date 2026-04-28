@@ -1,6 +1,6 @@
 import { ROLES } from "./constants";
 import { INSTRUTOR_PATHS } from "./path";
-import { replaceChar, toUrl } from "./utils";
+import { replaceChar, toUrl } from "./utils-func";
 
 type UserRole = "INSTRUTOR";
 
