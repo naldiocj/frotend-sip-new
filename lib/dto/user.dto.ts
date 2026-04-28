@@ -31,11 +31,7 @@ export interface CreateUserDTO {
   email: string;
   phoneNumber?: string;
   password?: string;
-  emailVerified?: boolean;
-  provider?: "LOCAL" | "GOOGLE" | "FACEBOOK";
-  providerId?: string;
   roleIds?: number[];
-  active?: boolean;
 }
 
 export interface RoleDTO {

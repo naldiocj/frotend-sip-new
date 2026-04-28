@@ -23,6 +23,10 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 import { UserPlus, Loader2 } from "lucide-react";
+import api, { apiWithToken } from "@/lib/api";
+import { getSession } from "@/lib/session";
+import { createUser } from "@/app/services/user.service";
+import { CreateUserDTO } from "@/lib/dto/user.dto";
 
 interface Role {
   id: number;
@@ -51,7 +55,7 @@ export function UserModal({ onSuccess, roles = [] }: UserModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim() || !formData.email.trim()) {
       toast.error("Nome e email são obrigatórios.");
       return;
@@ -69,14 +73,23 @@ export function UserModal({ onSuccess, roles = [] }: UserModalProps) {
 
     setIsPending(true);
 
-    try {
-      const response = await fetch("/api/v1/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    const token = await getSession();
 
-      const data = await response.json();
+    console.log(formData);
+
+    try {
+      const newUser: CreateUserDTO = {
+        email: formData.email,
+        name: formData.name,
+        password: formData.password,
+        phoneNumber: formData.phoneNumber,
+        roleIds: formData.roleIds,
+      };
+      const response = await createUser(newUser);
+
+      console.log(response);
+
+      const data = response;
 
       if (response.ok) {
         toast.success("Utilizador registado com sucesso.");
@@ -98,6 +111,7 @@ export function UserModal({ onSuccess, roles = [] }: UserModalProps) {
       }
     } catch (error) {
       toast.error("Erro ao conectar com o servidor.");
+      console.log(error);
     } finally {
       setIsPending(false);
     }
@@ -174,7 +188,10 @@ export function UserModal({ onSuccess, roles = [] }: UserModalProps) {
               <Select
                 value={formData.provider}
                 onValueChange={(value) =>
-                  setFormData({ ...formData, provider: value as "LOCAL" | "GOOGLE" | "FACEBOOK" })
+                  setFormData({
+                    ...formData,
+                    provider: value as "LOCAL" | "GOOGLE" | "FACEBOOK",
+                  })
                 }
               >
                 <SelectTrigger>
@@ -212,7 +229,10 @@ export function UserModal({ onSuccess, roles = [] }: UserModalProps) {
                     placeholder="••••••••"
                     value={formData.confirmPassword}
                     onChange={(e) =>
-                      setFormData({ ...formData, confirmPassword: e.target.value })
+                      setFormData({
+                        ...formData,
+                        confirmPassword: e.target.value,
+                      })
                     }
                     required={formData.provider === "LOCAL"}
                   />
