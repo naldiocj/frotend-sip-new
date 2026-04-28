@@ -54,6 +54,11 @@ const data = {
       icon: <Users className="h-4 w-4" />,
     },
     {
+      title: "Directores",
+      url: "/admin/directores",
+      icon: <Users className="h-4 w-4" />,
+    },
+    {
       title: "Crimes",
       url: "/admin/tipos-de-crimes",
       icon: <BarChart3 className="h-4 w-4" />,

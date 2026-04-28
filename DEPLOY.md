@@ -157,4 +157,4 @@ Este ficheiro ajudará a manter o padrão do deploy se precisares de formatar o 
 
 ## Run all services
 
-docker start a15a75d9a545 && sudo systemctl restart sip.service && pm2 start ecosystem.config.js
+cd /home/sgp2/source/sip/frontend && docker start a15a75d9a545 && sudo systemctl restart sip.service && pm2 start ecosystem.config.js

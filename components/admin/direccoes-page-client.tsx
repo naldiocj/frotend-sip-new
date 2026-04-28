@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,7 +11,7 @@ import {
   type SortingState,
   type ColumnDef,
 } from "@tanstack/react-table";
-import { Search, ChevronLeft, ChevronRight, Eye, Pencil, Trash2, Plus, Compass } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, Eye, Pencil, Trash2, Plus, Upload, Download, FileSpreadsheet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,83 +38,107 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { DireccaoDTO } from "@/lib/dto/direccao.dto";
-import { convertData } from "@/lib/date-utils";
-import { createDireccao, updateDireccao, deleteDireccao } from "@/app/services/direccao.service";
+import { DirecaoDTO, CreateDirecaoDTO } from "@/lib/dto/direcao.dto";
+import { bulkCreateDirecao } from "@/app/services/direcao.service";
 
 interface PageProps {
-  initialData: DireccaoDTO[];
+  initialData: DirecaoDTO[];
+}
+
+const CSV_TEMPLATE = "nome,sigla,descricao\nDireção de Investigação Criminal,DIC,Responsável pela investigação criminal\nDireção de Polícia Judiciária,DPJ,Responsável pela polícia judiciária";
+
+function downloadTemplate() {
+  const blob = new Blob([CSV_TEMPLATE], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "direcoes_template.csv";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function parseCSV(content: string): CreateDirecaoDTO[] {
+  const lines = content.trim().split("\n");
+  const result: CreateDirecaoDTO[] = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    const parts = line.split(",");
+    if (parts.length >= 3) {
+      result.push({
+        nome: parts[0].trim(),
+        sigla: parts[1].trim(),
+        descricao: parts.slice(2).join(",").trim(),
+      });
+    }
+  }
+
+  return result;
 }
 
 export function DireccoesPageClient({ initialData }: PageProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [data, setData] = useState<DirecaoDTO[]>(initialData);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [viewModal, setViewModal] = useState<DireccaoDTO | null>(null);
-  const [editModal, setEditModal] = useState<DireccaoDTO | null>(null);
+  const [viewModal, setViewModal] = useState<DirecaoDTO | null>(null);
+  const [editModal, setEditModal] = useState<DirecaoDTO | null>(null);
   const [createModal, setCreateModal] = useState(false);
-  const [deleteModal, setDeleteModal] = useState<DireccaoDTO | null>(null);
+  const [bulkModal, setBulkModal] = useState(false);
+  const [bulkFile, setBulkFile] = useState<File | null>(null);
+  const [bulkPreview, setBulkPreview] = useState<CreateDirecaoDTO[]>([]);
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
   const [editForm, setEditForm] = useState({ nome: "", sigla: "", descricao: "" });
   const [createForm, setCreateForm] = useState({ nome: "", sigla: "", descricao: "" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const openViewModal = (direccao: DireccaoDTO) => setViewModal(direccao);
-  const openEditModal = (direccao: DireccaoDTO) => {
-    setEditModal(direccao);
-    setEditForm({ nome: direccao.nome, sigla: direccao.sigla, descricao: direccao.descricao || "" });
+  const openViewModal = (direcao: DirecaoDTO) => setViewModal(direcao);
+  const openEditModal = (direcao: DirecaoDTO) => {
+    setEditModal(direcao);
+    setEditForm({
+      nome: direcao.nome,
+      sigla: direcao.sigla || "",
+      descricao: direcao.descricao || "",
+    });
   };
-  const openDeleteModal = (direccao: DireccaoDTO) => setDeleteModal(direccao);
 
-  const handleCreate = async () => {
-    if (!createForm.nome.trim() || !createForm.sigla.trim()) {
-      toast.error("Nome e Sigla são obrigatórios.");
-      return;
-    }
-    setIsSubmitting(true);
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      const parsed = parseCSV(content);
+      setBulkPreview(parsed);
+      setBulkFile(file);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleBulkUpload = async () => {
+    if (bulkPreview.length === 0) return;
+
+    setIsBulkLoading(true);
+
     try {
-      await createDireccao(createForm);
-      toast.success("Direção criada com sucesso.");
-      setCreateModal(false);
-      setCreateForm({ nome: "", sigla: "", descricao: "" });
+      await bulkCreateDirecao(bulkPreview);
+      toast.success(`${bulkPreview.length} direções importadas com sucesso.`);
+      setBulkModal(false);
+      setBulkFile(null);
+      setBulkPreview([]);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao criar direção.");
+      console.error("Bulk upload error:", error);
+      toast.error(error instanceof Error ? error.message : "Erro ao importar direções.");
     } finally {
-      setIsSubmitting(false);
+      setIsBulkLoading(false);
     }
   };
 
-  const handleUpdate = async () => {
-    if (!editForm.nome.trim() || !editForm.sigla.trim() || !editModal) {
-      toast.error("Nome e Sigla são obrigatórios.");
-      return;
-    }
-    setIsSubmitting(true);
-    try {
-      await updateDireccao(String(editModal.id), editForm);
-      toast.success("Direção atualizada com sucesso.");
-      setEditModal(null);
-      setEditForm({ nome: "", sigla: "", descricao: "" });
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao atualizar direção.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!deleteModal) return;
-    setIsSubmitting(true);
-    try {
-      await deleteDireccao(String(deleteModal.id));
-      toast.success("Direção eliminada com sucesso.");
-      setDeleteModal(null);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Erro ao eliminar direção.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const columns = useMemo<ColumnDef<DireccaoDTO>[]>(
+  const columns = useMemo<ColumnDef<DirecaoDTO>[]>(
     () => [
       {
         accessorKey: "id",
@@ -129,21 +153,36 @@ export function DireccoesPageClient({ initialData }: PageProps) {
       {
         accessorKey: "sigla",
         header: "Sigla",
-        cell: ({ row }) => <span className="text-muted-foreground">{row.getValue("sigla")}</span>,
+        cell: ({ row }) => {
+          const value = row.getValue("sigla") as string | undefined;
+          return <span className="text-muted-foreground">{value || "—"}</span>;
+        },
+      },
+      {
+        accessorKey: "descricao",
+        header: "Descrição",
+        cell: ({ row }) => {
+          const value = row.getValue("descricao") as string | undefined;
+          return <span className="text-muted-foreground">{value || "—"}</span>;
+        },
       },
       {
         accessorKey: "updatedAt",
         header: "Atualizado em",
         cell: ({ row }) => {
           const value = row.getValue("updatedAt") as string;
-          return <span className="text-muted-foreground">{value ? convertData(value) : "—"}</span>;
+          return (
+            <span className="text-muted-foreground">
+              {value ? new Date(value).toLocaleDateString("pt-BR") : "—"}
+            </span>
+          );
         },
       },
       {
         id: "actions",
         header: "Ações",
         cell: ({ row }) => {
-          const direccao = row.original;
+          const direcao = row.original;
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -152,15 +191,15 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => openViewModal(direccao)}>
+                <DropdownMenuItem onClick={() => openViewModal(direcao)}>
                   <Eye className="mr-2 h-4 w-4" />
                   Visualizar
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => openEditModal(direccao)}>
+                <DropdownMenuItem onClick={() => openEditModal(direcao)}>
                   <Pencil className="mr-2 h-4 w-4" />
                   Editar
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600" onClick={() => openDeleteModal(direccao)}>
+                <DropdownMenuItem className="text-red-600">
                   <Trash2 className="mr-2 h-4 w-4" />
                   Eliminar
                 </DropdownMenuItem>
@@ -193,29 +232,36 @@ export function DireccoesPageClient({ initialData }: PageProps) {
           <div className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:justify-between lg:p-8">
             <div className="space-y-2">
               <p className="text-[10px] font-semibold uppercase tracking-[.28em] text-muted-foreground">
-                Gestão de Direções
+                Catálogo de Direções
               </p>
               <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
                 Direções cadastradas
               </h1>
               <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Consulte e gerencie as direções do SIP.
+                Visualize e administre as direções utilizadas no SIP.
               </p>
             </div>
+
             <div className="flex items-center gap-4">
+              <Button variant="outline" className="gap-2" onClick={() => setBulkModal(true)}>
+                <Upload className="h-4 w-4" />
+                Importar CSV
+              </Button>
               <Button className="gap-2" onClick={() => setCreateModal(true)}>
                 <Plus className="h-4 w-4" />
                 Nova Direção
               </Button>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Compass className="h-5 w-5" />
+                  <Eye className="h-5 w-5" />
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
                     Total
                   </p>
-                  <p className="text-lg font-semibold text-foreground">{initialData.length}</p>
+                  <p className="text-lg font-semibold text-foreground">
+                    {initialData.length}
+                  </p>
                 </div>
               </div>
             </div>
@@ -247,7 +293,9 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                       <TableRow key={headerGroup.id}>
                         {headerGroup.headers.map((header) => (
                           <TableHead key={header.id}>
-                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(header.column.columnDef.header, header.getContext())}
                           </TableHead>
                         ))}
                       </TableRow>
@@ -280,10 +328,20 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                   Página {table.getState().pagination.pageIndex + 1} de {table.getPageCount()}
                 </span>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                  >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                  >
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -297,6 +355,9 @@ export function DireccoesPageClient({ initialData }: PageProps) {
           <DialogContent size="lg">
             <DialogHeader>
               <DialogTitle>Detalhes da Direção</DialogTitle>
+              <DialogDescription>
+                Informação completa da direção registada.
+              </DialogDescription>
             </DialogHeader>
             {viewModal && (
               <div className="grid gap-4 py-4">
@@ -306,7 +367,7 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right text-muted-foreground">Sigla</Label>
-                  <div className="col-span-3">{viewModal.sigla}</div>
+                  <div className="col-span-3">{viewModal.sigla || "—"}</div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right text-muted-foreground">Descrição</Label>
@@ -314,16 +375,26 @@ export function DireccoesPageClient({ initialData }: PageProps) {
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right text-muted-foreground">Criado em</Label>
-                  <div className="col-span-3">{viewModal.createdAt ? convertData(viewModal.createdAt) : "—"}</div>
+                  <div className="col-span-3">
+                    {viewModal.createdAt
+                      ? new Date(viewModal.createdAt).toLocaleDateString("pt-BR")
+                      : "—"}
+                  </div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right text-muted-foreground">Atualizado em</Label>
-                  <div className="col-span-3">{viewModal.updatedAt ? convertData(viewModal.updatedAt) : "—"}</div>
+                  <div className="col-span-3">
+                    {viewModal.updatedAt
+                      ? new Date(viewModal.updatedAt).toLocaleDateString("pt-BR")
+                      : "—"}
+                  </div>
                 </div>
               </div>
             )}
             <DialogFooter>
-              <Button variant="outline" onClick={() => setViewModal(null)}>Fechar</Button>
+              <Button variant="outline" onClick={() => setViewModal(null)}>
+                Fechar
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -333,26 +404,47 @@ export function DireccoesPageClient({ initialData }: PageProps) {
           <DialogContent size="full">
             <DialogHeader>
               <DialogTitle>Editar Direção</DialogTitle>
+              <DialogDescription>
+                Atualize os dados da direção.
+              </DialogDescription>
             </DialogHeader>
             {editModal && (
               <form className="grid gap-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-nome">Nome *</Label>
-                  <Input id="edit-nome" value={editForm.nome} onChange={(e) => setEditForm({ ...editForm, nome: e.target.value })} />
+                  <Input
+                    id="edit-nome"
+                    value={editForm.nome}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, nome: e.target.value })
+                    }
+                  />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="edit-sigla">Sigla *</Label>
-                  <Input id="edit-sigla" value={editForm.sigla} onChange={(e) => setEditForm({ ...editForm, sigla: e.target.value })} placeholder="DPLU" />
+                  <Label htmlFor="edit-sigla">Sigla</Label>
+                  <Input
+                    id="edit-sigla"
+                    value={editForm.sigla}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, sigla: e.target.value })
+                    }
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-descricao">Descrição</Label>
-                  <Input id="edit-descricao" value={editForm.descricao} onChange={(e) => setEditForm({ ...editForm, descricao: e.target.value })} />
+                  <Input
+                    id="edit-descricao"
+                    value={editForm.descricao}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, descricao: e.target.value })
+                    }
+                  />
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setEditModal(null)}>Cancelar</Button>
-                  <Button type="submit" disabled={isSubmitting} onClick={handleUpdate}>
-                    {isSubmitting ? "A guardar..." : "Guardar Alterações"}
+                  <Button type="button" variant="outline" onClick={() => setEditModal(null)}>
+                    Cancelar
                   </Button>
+                  <Button type="submit">Guardar Alterações</Button>
                 </DialogFooter>
               </form>
             )}
@@ -364,44 +456,133 @@ export function DireccoesPageClient({ initialData }: PageProps) {
           <DialogContent size="full">
             <DialogHeader>
               <DialogTitle>Nova Direção</DialogTitle>
-              <DialogDescription>Cadastre uma nova direção no sistema.</DialogDescription>
+              <DialogDescription>
+                Cadastre uma nova direção no sistema.
+              </DialogDescription>
             </DialogHeader>
             <form className="grid gap-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="create-nome">Nome *</Label>
-                <Input id="create-nome" value={createForm.nome} onChange={(e) => setCreateForm({ ...createForm, nome: e.target.value })} placeholder="Direção Provincial de Luanda" />
+                <Input
+                  id="create-nome"
+                  value={createForm.nome}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, nome: e.target.value })
+                  }
+                  placeholder="ex: Direção de Investigação Criminal"
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="create-sigla">Sigla *</Label>
-                <Input id="create-sigla" value={createForm.sigla} onChange={(e) => setCreateForm({ ...createForm, sigla: e.target.value })} placeholder="DPLU" />
+                <Label htmlFor="create-sigla">Sigla</Label>
+                <Input
+                  id="create-sigla"
+                  value={createForm.sigla}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, sigla: e.target.value })
+                  }
+                  placeholder="ex: DIC"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="create-descricao">Descrição</Label>
-                <Input id="create-descricao" value={createForm.descricao} onChange={(e) => setCreateForm({ ...createForm, descricao: e.target.value })} />
+                <Input
+                  id="create-descricao"
+                  value={createForm.descricao}
+                  onChange={(e) =>
+                    setCreateForm({ ...createForm, descricao: e.target.value })
+                  }
+                  placeholder="ex: Responsável pela investigação criminal"
+                />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setCreateModal(false)}>Cancelar</Button>
-                <Button type="submit" disabled={isSubmitting} onClick={handleCreate}>
-                  {isSubmitting ? "A criar..." : "Criar Direção"}
+                <Button type="button" variant="outline" onClick={() => setCreateModal(false)}>
+                  Cancelar
                 </Button>
+                <Button type="submit">Criar Direção</Button>
               </DialogFooter>
             </form>
           </DialogContent>
         </Dialog>
 
-        {/* Delete Modal */}
-        <Dialog open={!!deleteModal} onOpenChange={() => setDeleteModal(null)}>
-          <DialogContent size="default">
+        {/* Bulk Upload Modal */}
+        <Dialog open={bulkModal} onOpenChange={setBulkModal}>
+          <DialogContent size="lg">
             <DialogHeader>
-              <DialogTitle>Eliminar Direção</DialogTitle>
+              <DialogTitle>Importar Direções</DialogTitle>
               <DialogDescription>
-                Tem certeza que deseja eliminar a direção "{deleteModal?.nome}"? Esta ação não pode ser desfeita.
+                Carregue um arquivo CSV com as direções para importar em bulk.
               </DialogDescription>
             </DialogHeader>
+
+            <div className="space-y-4 py-4">
+              <div className="flex items-center gap-4">
+                <Button variant="outline" className="gap-2" onClick={downloadTemplate}>
+                  <Download className="h-4 w-4" />
+                  Baixar Modelo
+                </Button>
+              </div>
+
+              <div
+                className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".csv"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                />
+                <FileSpreadsheet className="mx-auto h-12 w-12 text-muted-foreground" />
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Clique ou arraste o arquivo CSV aqui
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Formato: nome,sigla,descricao
+                </p>
+              </div>
+
+              {bulkPreview.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Preview ({bulkPreview.length} registos)</Label>
+                  <div className="max-h-40 overflow-auto rounded border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Nome</TableHead>
+                          <TableHead>Sigla</TableHead>
+                          <TableHead>Descrição</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {bulkPreview.slice(0, 5).map((item, i) => (
+                          <TableRow key={i}>
+                            <TableCell>{item.nome}</TableCell>
+                            <TableCell>{item.sigla}</TableCell>
+                            <TableCell>{item.descricao}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  {bulkPreview.length > 5 && (
+                    <p className="text-xs text-muted-foreground">
+                      ...e mais {bulkPreview.length - 5} registos
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
             <DialogFooter>
-              <Button variant="outline" onClick={() => setDeleteModal(null)}>Cancelar</Button>
-              <Button variant="destructive" onClick={handleDelete} disabled={isSubmitting}>
-                {isSubmitting ? "A eliminar..." : "Eliminar"}
+              <Button variant="outline" onClick={() => setBulkModal(false)}>
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleBulkUpload}
+                disabled={bulkPreview.length === 0 || isBulkLoading}
+              >
+                {isBulkLoading ? "A importar..." : `Importar ${bulkPreview.length} registos`}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -8,4 +8,5 @@ export interface Remessa {
   status: "PENDENTE" | "EM_TRANSITO" | "RECEBIDO";
   documentosIds: number[];
   responsavelEnvio: string;
+  arquivo?: string;
 }

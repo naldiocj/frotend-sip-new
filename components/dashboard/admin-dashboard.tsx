@@ -48,22 +48,24 @@ const COLORS = {
   blue: "#3b82f6",
   emerald: "#10b981",
   amber: "#f59e0b",
-  rose: "#f43f5e",
+  rose: "#ef4444",
   violet: "#8b5cf6",
   cyan: "#06b6d4",
   orange: "#f97316",
   purple: "#a855f7",
+  pink: "#ec4899",
+  indigo: "#6366f1",
 };
 
 const CHART_COLORS = [
-  COLORS.blue,
-  COLORS.emerald,
-  COLORS.amber,
-  COLORS.rose,
-  COLORS.violet,
-  COLORS.cyan,
-  COLORS.orange,
-  COLORS.purple,
+  "#3b82f6",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#06b6d4",
+  "#f97316",
+  "#a855f7",
 ];
 
 function formatDate(date: string) {
@@ -157,17 +159,23 @@ function CustomPieChart({
         </Pie>
         <Tooltip
           contentStyle={{
-            backgroundColor: "#1f2937",
-            border: "none",
+            backgroundColor: "#fff",
+            border: "1px solid #e5e7eb",
             borderRadius: "8px",
-            color: "#fff",
+            boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+            color: "#1f2937",
+            fontSize: "12px",
+            fontWeight: 500,
           }}
+          itemStyle={{ color: "#1f2937", fontWeight: 500 }}
+          formatter={(value, name) => [`${value} (${total > 0 ? Math.round((Number(value) / total) * 100) : 0}%)`, name]}
+          labelFormatter={(label) => `${label}`}
         />
         <Legend
           verticalAlign="bottom"
           height={36}
           formatter={(value) => (
-            <span className="text-xs text-muted-foreground">{value}</span>
+            <span className="text-xs text-foreground font-medium">{value}</span>
           )}
         />
       </PieChart>

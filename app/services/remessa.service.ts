@@ -3,7 +3,6 @@
 import { apiWithToken } from "@/lib/api";
 import { Remessa } from "@/lib/dto/remessa.dto";
 import { getSession } from "@/lib/session";
-import { revalidateTag } from "next/cache";
 import { requiredUser } from "./user.service";
 
 const mockRemessas: Remessa[] = [
@@ -69,7 +68,7 @@ export async function getRemessas(query?: string) {
       next: { tags: ["get-remessas"] },
     }).get(`/remessas`);
 
-    return response as Remessa[];
+    return response.data as Remessa[];
   } catch (error: any) {
     const term = query?.toLowerCase() || "";
     return mockRemessas.filter(
