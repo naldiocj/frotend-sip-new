@@ -4,6 +4,7 @@ import { apiWithToken } from "@/lib/api";
 import { CargoDTO } from "@/lib/dto/cargo.dto";
 import { getSession } from "@/lib/session";
 import { requiredUser } from "./user.service";
+import { revalidateTag } from "next/cache";
 
 const mockCargos: CargoDTO[] = [
   { id: 1, nome: "Director Provincial", sigla: "DP", descricao: "Director Provincial" },
@@ -47,6 +48,7 @@ export async function createCargo(data: CargoDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/cargos", data);
+    revalidateTag("get-cargos", {});
     return response.data as CargoDTO;
   } catch (error: any) {
     console.warn("Using mock create:", error.message);
@@ -69,6 +71,7 @@ export async function updateCargo(id: string, data: Partial<CargoDTO>) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).put(`/cargos/${id}`, data);
+    revalidateTag("get-cargos", {});
     return response.data as CargoDTO;
   } catch (error: any) {
     console.warn("Using mock update:", error.message);

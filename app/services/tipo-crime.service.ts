@@ -4,6 +4,7 @@ import { apiWithToken } from "@/lib/api";
 import { TipoCrimeDTO } from "@/lib/dto/tipo-crime.dto";
 import { getSession } from "@/lib/session";
 import { requiredUser } from "./user.service";
+import { revalidateTag } from "next/cache";
 
 const mockTiposCrimes: TipoCrimeDTO[] = [
   {
@@ -91,7 +92,7 @@ export async function createTipoCrime(data: CreateTipoCrimeDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/tipos-crimes", data);
-
+    revalidateTag("get-tipos-crimes", {});
     return response.data as TipoCrimeDTO;
   } catch (error: any) {
     console.warn("Using mock create:", error.message);
@@ -113,7 +114,7 @@ export async function updateTipoCrime(id: string, data: UpdateTipoCrimeDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).put(`/tipos-crimes/${id}`, data);
-
+    revalidateTag("get-tipos-crimes", {});
     return response.data as TipoCrimeDTO;
   } catch (error: any) {
     console.warn("Using mock update:", error.message);
@@ -151,6 +152,7 @@ export async function bulkCreateTipoCrime(data: CreateTipoCrimeDTO[]) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/tipos-crimes/bulk", data);
+    revalidateTag("get-tipos-crimes", {});
     return response.data as TipoCrimeDTO[];
   } catch (error: any) {
     console.warn("Using mock bulk create:", error.message);

@@ -4,6 +4,7 @@ import { apiWithToken } from "@/lib/api";
 import { DirectorDTO } from "@/lib/dto/director.dto";
 import { getSession } from "@/lib/session";
 import { requiredUser } from "./user.service";
+import { revalidateTag } from "next/cache";
 
 const mockDirectores: DirectorDTO[] = [
   {
@@ -74,6 +75,7 @@ export async function createDirector(data: any) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/directores", data);
+    revalidateTag("get-directores", {});
     return response.data as DirectorDTO;
   } catch (error: any) {
     console.warn("Using mock create:", error.message);
@@ -98,6 +100,7 @@ export async function updateDirector(id: string, data: Partial<DirectorDTO>) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).put(`/directores/${id}`, data);
+    revalidateTag("get-directores", {});
     return response.data as DirectorDTO;
   } catch (error: any) {
     console.warn("Using mock update:", error.message);
@@ -135,6 +138,7 @@ export async function bulkCreateDirector(data: DirectorDTO[]) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/directores/bulk", data);
+    revalidateTag("get-directores", {});
     return response.data as DirectorDTO[];
   } catch (error: any) {
     console.warn("Using mock bulk create:", error.message);

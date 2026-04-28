@@ -77,7 +77,6 @@ export function AtribuirDirecaoModal({
 
     startTransition(async () => {
       try {
-        alert(processoId);
         await atribuirDirecao({
           processoId: Number(processoId),
           direcaoId: Number(direcaoId),

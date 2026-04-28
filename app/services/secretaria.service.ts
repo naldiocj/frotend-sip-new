@@ -4,6 +4,7 @@ import { apiWithToken } from "@/lib/api";
 import { SecretariaDTO } from "@/lib/dto/secretaria.dto";
 import { getSession } from "@/lib/session";
 import { requiredUser } from "./user.service";
+import { revalidateTag } from "next/cache";
 
 const mockSecretarias: SecretariaDTO[] = [
   {
@@ -82,7 +83,7 @@ export async function createSecretaria(data: CreateSecretariaDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/secretarias", data);
-
+    revalidateTag("get-secretarias", {});
     return response.data as SecretariaDTO;
   } catch (error: any) {
     console.warn("Using mock create:", error.message);
@@ -105,7 +106,7 @@ export async function updateSecretaria(id: string, data: UpdateSecretariaDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).put(`/secretarias/${id}`, data);
-
+    revalidateTag("get-secretarias", {});
     return response.data as SecretariaDTO;
   } catch (error: any) {
     console.warn("Using mock update:", error.message);

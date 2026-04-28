@@ -4,6 +4,7 @@ import { apiWithToken } from "@/lib/api";
 import { CategoriaDTO } from "@/lib/dto/categoria.dto";
 import { getSession } from "@/lib/session";
 import { requiredUser } from "./user.service";
+import { revalidateTag } from "next/cache";
 
 const mockCategorias: CategoriaDTO[] = [
   { id: 1, nome: "Criminal", createdAt: "2024-01-15T10:00:00Z", updatedAt: "2024-01-15T10:00:00Z" },
@@ -59,7 +60,7 @@ export async function createCategoria(data: CreateCategoriaDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/categorias", data);
-
+    revalidateTag("get-categorias", {});
     return response.data as CategoriaDTO;
   } catch (error: any) {
     console.warn("Using mock create:", error.message);
@@ -80,7 +81,7 @@ export async function updateCategoria(id: string, data: UpdateCategoriaDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).put(`/categorias/${id}`, data);
-
+    revalidateTag("get-categorias", {});
     return response.data as CategoriaDTO;
   } catch (error: any) {
     console.warn("Using mock update:", error.message);

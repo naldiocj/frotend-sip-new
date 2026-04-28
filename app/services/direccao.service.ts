@@ -157,6 +157,7 @@ export async function atribuirDirecao(data: AtribuirDireccaoDTO) {
     await apiWithToken(token).patch(`/processos/${data.processoId}`, {
       direcaoId: data.direcaoId,
     });
+    revalidateTag("get-processos", {});
   } catch (error: any) {
     console.warn("Error assigning direction:", error.message);
     throw new Error("Impossível atribuir a direção ao processo");

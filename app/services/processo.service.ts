@@ -45,11 +45,7 @@ export async function getProcessoById(id: string) {
   await requiredUser();
   try {
     const token = await getSession();
-    const response = await apiWithToken(token, {
-      next: { tags: ["get-processos"] },
-    }).get(`/processos/${id}`);
-
-    console.log(response.data.crimes);
+    const response = await apiWithToken(token, {}).get(`/processos/${id}`);
 
     return response.data as ProcessoListItem;
   } catch (error: any) {

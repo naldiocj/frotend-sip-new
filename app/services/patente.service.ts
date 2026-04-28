@@ -4,6 +4,7 @@ import { apiWithToken } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { requiredUser } from "./user.service";
 import { PatenteDTO } from "@/lib/dto/patente.dto";
+import { revalidateTag } from "next/cache";
 
 const mockPatentes: PatenteDTO[] = [
   { id: 1, nome: "Comissário", categoria: { nome: "Polícia" }, createdAt: "2024-01-15T10:00:00Z", updatedAt: "2024-01-15T10:00:00Z" },
@@ -61,7 +62,7 @@ export async function createPatente(data: CreatePatenteDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/patentes", data);
-
+    revalidateTag("get-patentes", {});
     return response.data as PatenteDTO;
   } catch (error: any) {
     console.warn("Using mock create:", error.message);
@@ -83,7 +84,7 @@ export async function updatePatente(id: string, data: UpdatePatenteDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).put(`/patentes/${id}`, data);
-
+    revalidateTag("get-patentes", {});
     return response.data as PatenteDTO;
   } catch (error: any) {
     console.warn("Using mock update:", error.message);

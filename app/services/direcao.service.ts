@@ -2,6 +2,7 @@
 
 import { apiWithToken } from "@/lib/api";
 import { getSession } from "@/lib/session";
+import { revalidateTag } from "next/cache";
 import { requiredUser } from "./user.service";
 
 export interface DirecaoDTO {
@@ -44,7 +45,10 @@ export async function getDireccoes() {
 
   try {
     const token = await getSession();
-    const response = await apiWithToken(token).get("/direcoes");
+    const response = await apiWithToken(token, {
+      next: { tags: ["get-direcoes"] },
+    }).get("/direcoes");
+    revalidateTag("get-direcoes", {});
     return response.data as DirecaoDTO[];
   } catch (error: any) {
     console.warn("Using mock direcoes:", error.message);
@@ -58,6 +62,7 @@ export async function createDirecao(data: CreateDirecaoDTO) {
   try {
     const token = await getSession();
     const response = await apiWithToken(token).post("/direcoes", data);
+    revalidateTag("get-direcao", {});
     return response.data as DirecaoDTO;
   } catch (error: any) {
     console.warn("Using mock create:", error.message);
