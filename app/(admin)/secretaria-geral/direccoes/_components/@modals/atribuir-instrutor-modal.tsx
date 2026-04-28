@@ -31,12 +31,14 @@ interface AtribuirDirecaoModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   processoId: string;
+  direcaoId: string;
 }
 
 export function AtribuirInstrutorModal({
   direccoesPromise,
   processosPromise,
   instrutoresPromise,
+  direcaoId,
   open,
   setOpen,
   processoId,
@@ -46,7 +48,9 @@ export function AtribuirInstrutorModal({
 
   const direccoes = direccoesPromise ? use(direccoesPromise) : [];
   const processos = processosPromise ? use(processosPromise!) : [];
-  const instrutores = instrutoresPromise ? use(instrutoresPromise!) : [];
+  const instrutores = instrutoresPromise
+    ? use(instrutoresPromise!).filter((i) => i.direcao.id === Number(direcaoId))
+    : [];
 
   const processosOrdenados = useMemo(
     () =>
@@ -125,8 +129,7 @@ export function AtribuirInstrutorModal({
                 <SelectContent>
                   {instrutores.map((instrutor) => (
                     <SelectItem key={instrutor.id} value={String(instrutor.id)}>
-                      {instrutor.nomeCompleto} - {instrutor.direcao?.nome} -{" "}
-                      {processoId}
+                      {instrutor.nomeCompleto} - {instrutor.direcao?.sigla}
                     </SelectItem>
                   ))}
                 </SelectContent>

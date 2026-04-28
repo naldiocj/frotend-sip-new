@@ -3,7 +3,7 @@ export interface ProcessoListItem {
   nome: string;
   estadoProcesso: ESTADO_PROCESSO;
   descricao: string;
-  direcao: { nome: string };
+  direcao: { id: number; nome: string };
   numero: string;
   tipoProcesso: "NORMAL" | "AVERIGUACAO" | "COM_DETIDO" | null;
   ano: string;

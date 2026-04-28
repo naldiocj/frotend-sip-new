@@ -3,7 +3,7 @@ export interface InstrutorDetailDTO {
   nomeCompleto: string;
   patente: string;
   cargoId: string;
-  direcao: { id: number; nome: string };
+  direcao: { id: number; nome: string; sigla: string };
   createdAt: string;
   updatedAt: string;
 }

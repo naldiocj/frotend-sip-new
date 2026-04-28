@@ -38,7 +38,7 @@ export function AtribuirDirecaoModal({
   setOpen,
   processoId,
 }: AtribuirDirecaoModalProps) {
-  const [direccaoId, setDireccaoId] = useState("");
+  const [direcaoId, setDirecaoId] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const direccoes = direccoesPromise ? use(direccoesPromise) : [];
@@ -57,7 +57,7 @@ export function AtribuirDirecaoModal({
   );
 
   function resetState() {
-    setDireccaoId("");
+    setDirecaoId("");
   }
 
   function handleOpenChange(nextOpen: boolean) {
@@ -68,7 +68,7 @@ export function AtribuirDirecaoModal({
   }
 
   function handleSubmit() {
-    if (!processoId || !direccaoId) {
+    if (!processoId || !direcaoId) {
       toast.error("ERRO", {
         description: "Selecione o processo e a direcção antes de confirmar.",
       });
@@ -77,9 +77,10 @@ export function AtribuirDirecaoModal({
 
     startTransition(async () => {
       try {
+        alert(processoId);
         await atribuirDirecao({
           processoId: Number(processoId),
-          direccaoId: Number(direccaoId),
+          direcaoId: Number(direcaoId),
         });
 
         toast.success("SUCESSO", {
@@ -113,7 +114,7 @@ export function AtribuirDirecaoModal({
                 <Building2 className="h-4 w-4" />
                 Direcção
               </FieldLabel>
-              <Select value={direccaoId} onValueChange={setDireccaoId}>
+              <Select value={direcaoId} onValueChange={setDirecaoId}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecione a direcção" />
                 </SelectTrigger>

@@ -20,6 +20,9 @@ import {
   Trash2,
   Plus,
   Briefcase,
+  ArrowUp,
+  ArrowDown,
+  ChevronsUpDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -156,21 +159,57 @@ export function SecretariasPageClient({ initialData }: PageProps) {
     () => [
       {
         accessorKey: "id",
-        header: "ID",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 font-normal text-secondary-foreground/80 hover:bg-secondary"
+            onClick={() => column.toggleSorting()}
+          >
+            <span className="text-muted-foreground">ID</span>
+            {column.getIsSorted() === "asc" && <ArrowUp className="size-3.5 opacity-60" />}
+            {column.getIsSorted() === "desc" && <ArrowDown className="size-3.5 opacity-60" />}
+            {!column.getIsSorted() && <ChevronsUpDown className="size-3.5 opacity-60" />}
+          </Button>
+        ),
         cell: ({ row }) => (
           <span className="text-muted-foreground">#{row.getValue("id")}</span>
         ),
       },
       {
         accessorKey: "nomeCompleto",
-        header: "Nome",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 font-normal text-secondary-foreground/80 hover:bg-secondary"
+            onClick={() => column.toggleSorting()}
+          >
+            <span className="font-medium">Nome</span>
+            {column.getIsSorted() === "asc" && <ArrowUp className="size-3.5 opacity-60" />}
+            {column.getIsSorted() === "desc" && <ArrowDown className="size-3.5 opacity-60" />}
+            {!column.getIsSorted() && <ChevronsUpDown className="size-3.5 opacity-60" />}
+          </Button>
+        ),
         cell: ({ row }) => (
           <span className="font-medium">{row.getValue("nomeCompleto")}</span>
         ),
       },
       {
         accessorKey: "codigo",
-        header: "Código",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 font-normal text-secondary-foreground/80 hover:bg-secondary"
+            onClick={() => column.toggleSorting()}
+          >
+            <span className="text-muted-foreground">Código</span>
+            {column.getIsSorted() === "asc" && <ArrowUp className="size-3.5 opacity-60" />}
+            {column.getIsSorted() === "desc" && <ArrowDown className="size-3.5 opacity-60" />}
+            {!column.getIsSorted() && <ChevronsUpDown className="size-3.5 opacity-60" />}
+          </Button>
+        ),
         cell: ({ row }) => (
           <span className="text-muted-foreground">
             {row.getValue("codigo")}
@@ -178,8 +217,44 @@ export function SecretariasPageClient({ initialData }: PageProps) {
         ),
       },
       {
+        accessorKey: "direcao",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 font-normal text-secondary-foreground/80 hover:bg-secondary"
+            onClick={() => column.toggleSorting()}
+          >
+            <span className="text-muted-foreground">Direção</span>
+            {column.getIsSorted() === "asc" && <ArrowUp className="size-3.5 opacity-60" />}
+            {column.getIsSorted() === "desc" && <ArrowDown className="size-3.5 opacity-60" />}
+            {!column.getIsSorted() && <ChevronsUpDown className="size-3.5 opacity-60" />}
+          </Button>
+        ),
+        cell: ({ row }) => {
+          const direcao = row.getValue("direcao") as { nome: string; sigla: string } | undefined;
+          return (
+            <span className="text-muted-foreground">
+              {direcao ? `${direcao.sigla} - ${direcao.nome}` : "—"}
+            </span>
+          );
+        },
+      },
+      {
         accessorKey: "updatedAt",
-        header: "Atualizado em",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 px-2 font-normal text-secondary-foreground/80 hover:bg-secondary"
+            onClick={() => column.toggleSorting()}
+          >
+            <span className="text-muted-foreground">Atualizado em</span>
+            {column.getIsSorted() === "asc" && <ArrowUp className="size-3.5 opacity-60" />}
+            {column.getIsSorted() === "desc" && <ArrowDown className="size-3.5 opacity-60" />}
+            {!column.getIsSorted() && <ChevronsUpDown className="size-3.5 opacity-60" />}
+          </Button>
+        ),
         cell: ({ row }) => {
           const value = row.getValue("updatedAt") as string;
           return (
@@ -191,7 +266,7 @@ export function SecretariasPageClient({ initialData }: PageProps) {
       },
       {
         id: "actions",
-        header: "Ações",
+        header: "",
         cell: ({ row }) => {
           const secretaria = row.original;
           return (

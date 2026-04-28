@@ -3,13 +3,42 @@
 import { apiWithToken } from "@/lib/api";
 import { DireccaoDTO } from "@/lib/dto/direccao.dto";
 import { getSession } from "@/lib/session";
+import { revalidateTag } from "next/cache";
 import { requiredUser } from "./user.service";
 
 const mockDireccoes: DireccaoDTO[] = [
-  { id: 1, nome: "Direção Provincial de Luanda", sigla: "DPLU", descricao: "Direção Provincial de Luanda", createdAt: "2024-01-15T10:00:00Z", updatedAt: "2024-01-15T10:00:00Z" },
-  { id: 2, nome: "Direção Provincial de Benguela", sigla: "DPBG", descricao: "Direção Provincial de Benguela", createdAt: "2024-01-15T10:00:00Z", updatedAt: "2024-01-15T10:00:00Z" },
-  { id: 3, nome: "Direção Provincial do Huambo", sigla: "DPHM", descricao: "Direção Provincial do Huambo", createdAt: "2024-01-15T10:00:00Z", updatedAt: "2024-01-15T10:00:00Z" },
-  { id: 4, nome: "Direção Provincial de Bengo", sigla: "DPBO", descricao: "Direção Provincial do Bengo", createdAt: "2024-01-15T10:00:00Z", updatedAt: "2024-01-15T10:00:00Z" },
+  {
+    id: 1,
+    nome: "Direção Provincial de Luanda",
+    sigla: "DPLU",
+    descricao: "Direção Provincial de Luanda",
+    createdAt: "2024-01-15T10:00:00Z",
+    updatedAt: "2024-01-15T10:00:00Z",
+  },
+  {
+    id: 2,
+    nome: "Direção Provincial de Benguela",
+    sigla: "DPBG",
+    descricao: "Direção Provincial de Benguela",
+    createdAt: "2024-01-15T10:00:00Z",
+    updatedAt: "2024-01-15T10:00:00Z",
+  },
+  {
+    id: 3,
+    nome: "Direção Provincial do Huambo",
+    sigla: "DPHM",
+    descricao: "Direção Provincial do Huambo",
+    createdAt: "2024-01-15T10:00:00Z",
+    updatedAt: "2024-01-15T10:00:00Z",
+  },
+  {
+    id: 4,
+    nome: "Direção Provincial de Bengo",
+    sigla: "DPBO",
+    descricao: "Direção Provincial do Bengo",
+    createdAt: "2024-01-15T10:00:00Z",
+    updatedAt: "2024-01-15T10:00:00Z",
+  },
 ];
 
 export async function getDireccoes() {
@@ -119,14 +148,14 @@ export async function deleteDireccao(id: string) {
 
 interface AtribuirDireccaoDTO {
   processoId: number;
-  direccaoId: number;
+  direcaoId: number;
 }
 
 export async function atribuirDirecao(data: AtribuirDireccaoDTO) {
   try {
     const token = await getSession();
-await apiWithToken(token).patch(`/processos/${data.processoId}`, {
-      "DireçãoId": data.direccaoId,
+    await apiWithToken(token).patch(`/processos/${data.processoId}`, {
+      direcaoId: data.direcaoId,
     });
   } catch (error: any) {
     console.warn("Error assigning direction:", error.message);
@@ -145,6 +174,7 @@ export async function atribuirInstrutor(data: AtribuirInstrutorDTO) {
     await apiWithToken(token).patch(`/processos/${data.processoId}`, {
       instrutorId: data.instrutorId,
     });
+    revalidateTag("get-processos", {});
   } catch (error: any) {
     console.warn("Error assigning instructor:", error.message);
     throw new Error("Impossível atribuir instrutor ao processo");
