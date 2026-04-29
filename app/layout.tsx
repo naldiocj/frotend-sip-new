@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { UserProvider } from "@/hooks/user-context";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { QueryProvider } from "@/components/providers/query-provider";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { Metadata } from "next";
@@ -41,21 +42,23 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NuqsAdapter>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <TooltipProvider>
-              <UserProvider>
-                {children}
-                <Toaster richColors closeButton />
-              </UserProvider>
-            </TooltipProvider>
-          </ThemeProvider>
-        </NuqsAdapter>
+        <QueryProvider>
+          <NuqsAdapter>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <TooltipProvider>
+                <UserProvider>
+                  {children}
+                  <Toaster richColors closeButton />
+                </UserProvider>
+              </TooltipProvider>
+            </ThemeProvider>
+          </NuqsAdapter>
+        </QueryProvider>
       </body>
     </html>
   );

@@ -33,3 +33,13 @@ export const PARTICIPANTES = {
   ADVOGADO_DEFESA: "DEFESA",
   ADVOGADO_ACUSACAO: "ACUSACAO",
 } as const;
+
+export const ROLES_DESCRIPTIONS: Record<string, string> = {
+  ADMIN: "Administrador do sistema",
+  DIRECTOR: "Director",
+  INSTRUTOR: "Instrutor",
+  SECRETARIA: "Secretaria",
+  SECRETARIA_GERAL: "Secretaria Geral",
+  PGR: "Procuradoria",
+  PIQUETE: "Piquete",
+};

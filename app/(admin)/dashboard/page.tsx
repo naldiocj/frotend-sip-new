@@ -65,19 +65,7 @@ export default async function Page() {
   return (
     <div className="px-4">
       {roleNames.includes(ROLES.ADMIN) && (
-        <AdminDashboard
-          processos={processos}
-          usuarios={usuarios}
-          categorias={categorias}
-          direccoes={direccoes}
-          patentes={patentes}
-          tiposCrimes={tiposCrimes}
-          mandatos={mandatos}
-          notificacoes={notificacoes}
-          remessas={remessas}
-          despachos={despachos}
-          detidos={detidos}
-        />
+        <AdminDashboard />
       )}
       {roleNames.length === 1 && roleNames.includes(ROLES.DIRECTOR) && (
         <DirectorDashboard />

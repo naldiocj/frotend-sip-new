@@ -1,12 +1,10 @@
 "use server";
 
 import { apiWithToken } from "@/lib/api";
-import { UserDTO } from "@/lib/dto/user.dto";
+import { CreateUserDTO, UserDTO } from "@/lib/dto/user.dto";
 import { getSession } from "@/lib/session";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
-
-export type CreateUserDTO = Omit<UserDTO, "id" | "createdAt" | "updatedAt">;
 
 export async function getUserSession() {
   const token = await getSession();
@@ -42,7 +40,9 @@ export async function getUsers() {
 
   try {
     const token = await getSession();
-    const response = await apiWithToken(token).get("/users");
+    const response = await apiWithToken(token, {
+      next: { tags: ["get-users"] },
+    }).get("/users");
 
     return response.data as UserDTO[];
   } catch (error: any) {
@@ -58,9 +58,9 @@ export async function createUser(data: CreateUserDTO) {
 
   try {
     const token = await getSession();
-    const response = await apiWithToken(token).post("/users", data);
+    const response = await apiWithToken(token).post("/auth/register", data);
     revalidateTag("get-users", {});
-    return response.data as UserDTO;
+    return response.data as { id: number };
   } catch (error: any) {
     console.log(error.response?.data);
     throw new Error(
