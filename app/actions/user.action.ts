@@ -1,8 +1,11 @@
 "use server";
 
-import { UserDTO, User } from "@/lib/dto/user.dto";
+import {
+  createUser,
+  deleteUser as deleteUserService,
+} from "@/app/services/user.service";
+import { CreateUserDTO, User } from "@/lib/dto/user.dto";
 import { getSession } from "@/lib/session";
-import { CreateUserDTO, createUser, deleteUser as deleteUserService } from "@/app/services/user.service";
 
 export async function getUserDetail() {
   const token = await getSession();
@@ -51,8 +54,7 @@ export async function registerUser(formData: CreateUserDTO) {
   } catch (error: any) {
     return {
       status: 500,
-      message:
-        error?.message || "Ocorreu um erro ao registar o utilizador.",
+      message: error?.message || "Ocorreu um erro ao registar o utilizador.",
     };
   }
 }
