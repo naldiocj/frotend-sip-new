@@ -1,18 +1,41 @@
 import { getDireccoes } from "@/app/services/direccao.service";
 import { getProcessos } from "@/app/services/processo.service";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DireccaoDTO } from "@/lib/dto/direccao.dto";
-import { Compass, LayoutGrid, Table } from "lucide-react";
+import { convertData } from "@/lib/date-utils";
+import { Compass } from "lucide-react";
 import { Suspense } from "react";
 import { AtribuirDirecaoModal } from "./_components/@modals/atribuir-direcao-modal";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page() {
-  const direccoesPromise = getDireccoes();
-  const processosPromise = getProcessos();
+interface PageProps {
+  params: Promise<{ id?: string }>;
+}
 
-  const direccoes: DireccaoDTO[] = await direccoesPromise;
+export default async function Page({ params }: PageProps) {
+  const idParams = await params;
+  const [direccoes, processos] = await Promise.all([
+    getDireccoes(),
+    getProcessos(),
+  ]);
+
+  if (idParams?.id) {
+    const direccao = direccoes.find((d) => d.id === Number(idParams.id));
+    if (direccao) {
+      return (
+        <main className="p-8">
+          <div className="rounded-lg border bg-card p-6">
+            <h2 className="text-xl font-semibold">{direccao.nome}</h2>
+            <p className="text-muted-foreground">{direccao.sigla}</p>
+            <p className="text-sm text-muted-foreground mt-2">{direccao.descricao}</p>
+            <p className="text-xs text-muted-foreground mt-4">
+              Criado em: {direccao.createdAt ? convertData(direccao.createdAt) : "—"} | 
+              Atualizado em: {direccao.updatedAt ? convertData(direccao.updatedAt) : "—"}
+            </p>
+          </div>
+        </main>
+      );
+    }
+  }
 
   return (
     <main className="bg-background px-4">
@@ -35,124 +58,42 @@ export default async function Page() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Suspense>
                 <AtribuirDirecaoModal
-                  direccoesPromise={direccoesPromise}
-                  processosPromise={processosPromise}
+                  direccoesPromise={Promise.resolve(direccoes)}
+                  processosPromise={Promise.resolve(processos)}
                 />
               </Suspense>
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Compass className="h-4 w-4" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
-                    Total de direccoes
-                  </p>
-                  <p className="text-sm font-semibold text-foreground">
-                    {direccoes.length}{" "}
-                    {direccoes.length === 1 ? "direccao" : "direccoes"}
-                  </p>
-                </div>
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Compass className="h-4 w-4" />
               </div>
             </div>
           </div>
         </section>
 
         <section className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-xs ring-1 ring-foreground/5">
-          <Tabs defaultValue="table">
-            <div className="flex flex-col gap-4 border-b border-border/60 px-6 py-4 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Modo de exibicao
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Alterna entre tabela e cards para consultar as direccoes.
-                </p>
-              </div>
-
-              <TabsList className="h-auto shrink-0 rounded-xl border border-border/50 bg-muted/50 p-1 dark:bg-muted/30">
-                <TabsTrigger
-                  value="table"
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:shadow-xs data-[state=active]:ring-1 data-[state=active]:ring-border/40 dark:data-[state=active]:bg-card"
-                >
-                  <Table className="h-4 w-4" />
-                  Tabela
-                </TabsTrigger>
-                <TabsTrigger
-                  value="cards"
-                  className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:shadow-xs data-[state=active]:ring-1 data-[state=active]:ring-border/40 dark:data-[state=active]:bg-card"
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                  Cards
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            <TabsContent value="table" className="mt-0 p-6 lg:p-8">
-              <div className="overflow-hidden rounded-3xl border border-border/60 bg-muted/40">
-                <table className="min-w-full divide-y divide-border text-sm">
-                  <thead className="bg-background text-left text-xs uppercase tracking-[.12em] text-muted-foreground">
-                    <tr>
-                      <th className="px-6 py-4">ID</th>
-                      <th className="px-6 py-4">Nome</th>
-                      <th className="px-6 py-4">Sigla</th>
-                      <th className="px-6 py-4">Atualizado em</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border bg-card">
-                    {direccoes.map((direccao) => (
-                      <tr key={direccao.id} className="hover:bg-muted/60">
-                        <td className="px-6 py-4 font-medium text-foreground">
-                          {direccao.id}
-                        </td>
-                        <td className="px-6 py-4 text-foreground">
-                          {direccao.nome}
-                        </td>
-                        <td className="px-6 py-4 text-muted-foreground">
-                          {direccao.sigla}
-                        </td>
-                        <td className="px-6 py-4 text-muted-foreground">
-                          {new Date(direccao.updatedAt).toLocaleDateString(
-                            "pt-BR",
-                            {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            },
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="cards" className="mt-0 p-6 lg:p-8">
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                {direccoes.map((direccao) => (
-                  <article
-                    key={direccao.id}
-                    className="overflow-hidden rounded-3xl border border-border/60 bg-background p-5 shadow-xs"
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[.24em] text-muted-foreground">
-                          Direccao
-                        </p>
-                        <h2 className="mt-2 text-lg font-semibold text-foreground">
-                          {direccao.nome}
-                        </h2>
-                      </div>
-                      <div className="rounded-xl bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+          <div className="p-6 lg:p-8">
+            <div className="overflow-hidden rounded-3xl border border-border/60 bg-muted/40">
+              <table className="min-w-full divide-y divide-border text-sm">
+                <thead className="bg-background text-left text-xs uppercase tracking-[.12em] text-muted-foreground">
+                  <tr>
+                    <th className="px-6 py-4">ID</th>
+                    <th className="px-6 py-4">Nome</th>
+                    <th className="px-6 py-4">Sigla</th>
+                    <th className="px-6 py-4">Atualizado em</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border bg-card">
+                  {direccoes.map((direccao) => (
+                    <tr key={direccao.id} className="hover:bg-muted/60">
+                      <td className="px-6 py-4 font-medium text-foreground">
+                        {direccao.id}
+                      </td>
+                      <td className="px-6 py-4 text-foreground">
+                        {direccao.nome}
+                      </td>
+                      <td className="px-6 py-4 text-muted-foreground">
                         {direccao.sigla}
-                      </div>
-                    </div>
-                    <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                      <p>{direccao.descricao}</p>
-                      <p>
-                        <span className="font-semibold text-foreground">
-                          Atualizado:
-                        </span>{" "}
+                      </td>
+                      <td className="px-6 py-4 text-muted-foreground">
                         {new Date(direccao.updatedAt).toLocaleDateString(
                           "pt-BR",
                           {
@@ -161,13 +102,13 @@ export default async function Page() {
                             year: "numeric",
                           },
                         )}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
       </div>
     </main>

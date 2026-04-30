@@ -7,6 +7,7 @@ import {
   updateDirector,
 } from "@/app/services/director.service";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -144,6 +152,7 @@ export function DirectoresPageClient({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [viewModal, setViewModal] = useState<DirectorDTO | null>(null);
   const [editModal, setEditModal] = useState<DirectorDTO | null>(null);
   const [createModal, setCreateModal] = useState(false);
@@ -319,29 +328,24 @@ export function DirectoresPageClient({
   const columns = useMemo<ColumnDef<DirectorDTO>[]>(
     () => [
       {
-        accessorKey: "id",
-        header: ({ column }) => (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 px-2 font-normal text-secondary-foreground/80 hover:bg-secondary data-[state=open]:bg-secondary hover:text-foreground data-[state=open]:text-foreground"
-            onClick={() => column.toggleSorting()}
-          >
-            <span className="text-muted-foreground">ID</span>
-            {column.getIsSorted() === "asc" && (
-              <ArrowUp className="size-3.5 opacity-60" />
-            )}
-            {column.getIsSorted() === "desc" && (
-              <ArrowDown className="size-3.5 opacity-60" />
-            )}
-            {!column.getIsSorted() && (
-              <ChevronsUpDown className="size-3.5 opacity-60" />
-            )}
-          </Button>
+        id: "select",
+        header: ({ table }) => (
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Selecionar todas as linhas"
+          />
         ),
         cell: ({ row }) => (
-          <span className="text-muted-foreground">#{row.getValue("id")}</span>
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Selecionar linha"
+          />
         ),
+        enableSorting: false,
+        enableHiding: false,
+        size: 40,
       },
       {
         accessorKey: "nomeCompleto",
@@ -528,14 +532,16 @@ export function DirectoresPageClient({
   const table = useReactTable({
     data: initialData,
     columns,
-    state: { sorting, globalFilter },
+    state: { sorting, globalFilter, pagination },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
+    onPaginationChange: setPagination,
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    initialState: { pagination: { pageSize: 10 } },
   });
 
   return (
@@ -567,18 +573,8 @@ export function DirectoresPageClient({
                 <Plus className="h-4 w-4" />
                 Novo Director
               </Button>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
-                    Total
-                  </p>
-                  <p className="text-lg font-semibold text-foreground">
-                    {initialData.length}
-                  </p>
-                </div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Users className="h-5 w-5" />
               </div>
             </div>
           </div>
@@ -648,12 +644,44 @@ export function DirectoresPageClient({
                 </Table>
               </div>
 
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  Página {table.getState().pagination.pageIndex + 1} de{" "}
-                  {table.getPageCount()}
-                </span>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-muted-foreground">
+                    Página {table.getState().pagination.pageIndex + 1} de{" "}
+                    {table.getPageCount()}
+                  </span>
+                  {table.getSelectedRowModel().rows.length > 0 && (
+                    <span className="text-sm text-muted-foreground">
+                      {table.getSelectedRowModel().rows.length} selecionado(s)
+                    </span>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">Itens por página:</span>
+                    <Select
+                      value={String(table.getState().pagination.pageSize)}
+                      onValueChange={(value) => table.setPageSize(Number(value))}
+                    >
+                      <SelectTrigger className="h-8 w-[70px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
                 <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(0)}
+                    disabled={!table.getCanPreviousPage()}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4 -ml-2" />
+                  </Button>
                   <Button
                     variant="outline"
                     size="sm"
@@ -669,6 +697,15 @@ export function DirectoresPageClient({
                     disabled={!table.getCanNextPage()}
                   >
                     <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                    disabled={!table.getCanNextPage()}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4 -ml-2" />
                   </Button>
                 </div>
               </div>

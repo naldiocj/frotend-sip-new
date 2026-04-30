@@ -1,10 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { UsersTable } from "@/components/admin/users-table";
 import { UserModal } from "@/components/admin/user-modal";
-import { Users } from "lucide-react";
-import { UserDTO, RoleDTO } from "@/lib/dto/user.dto";
+import { UsersTable } from "@/components/admin/users-table";
+import { RoleDTO, UserDTO } from "@/lib/dto/user.dto";
+import { useState } from "react";
 
 interface PageProps {
   initialUsers: UserDTO[];
@@ -28,26 +27,13 @@ export function UsuariosPageClient({ initialUsers, initialRoles }: PageProps) {
                 Gestão de utilizadores SIP
               </h1>
               <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
-                Consulte e registre novos utilizadores do sistema. Mantemos o acesso e os
-                perfis atualizados para a operação institucional.
+                Consulte e registre novos utilizadores do sistema. Mantemos o
+                acesso e os perfis atualizados para a operação institucional.
               </p>
             </div>
 
             <div className="flex items-center gap-4">
               <UserModal roles={roles} />
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[.2em] text-muted-foreground">
-                    Total
-                  </p>
-                  <p className="text-lg font-semibold text-foreground">
-                    {users.length}
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         </section>

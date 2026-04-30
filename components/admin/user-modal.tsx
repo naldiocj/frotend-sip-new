@@ -113,7 +113,7 @@ export function UserModal({ onSuccess, roles = [] }: UserModalProps) {
       <DialogTrigger asChild>
         <Button className="gap-2">
           <UserPlus className="h-4 w-4" />
-          Novo Utilizador
+          registar
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl" size="full">
